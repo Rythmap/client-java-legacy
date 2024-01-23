@@ -1,2 +1,2 @@
-# Melomap-client
-Melomap implementation in Java
+# Melomap Сlient
+Melomap client written in Java
