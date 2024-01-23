@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Melomap</string>
+    <string name="client_id">client_id</string>
+    <string name="oauth">oauth</string>
+    <string name="request">request</string>
+    <string name="token">token</string>
+    <string name="data_here">data here</string>
+    <string name="yandex_music">Yandex Music</string>
+    <string name="soundcloud">SoundCloud</string>
+    <string name="show">show</string>
+    <string name="yandex_music_request_result">Yandex Music request result</string>
+    <string name="soundcloud_request_result">SoundCloud request result</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="username_or_email">username or email</string>
+    <string name="login">login</string>
+    <string name="register">register</string>
+    <string name="dont_have_an_account">don\'t have an account?</string>
+    <string name="i_have_an_account">I have an account</string>
+    <string name="unknown_error">"unknown error "</string>
+    <string name="email">email</string>
+    <string name="wait">wait</string>
+    <string name="logout">logout</string>
+    <string name="account_info_here">account info here</string>
+    <string name="error_checking_token_validity">"error checking token validity "</string>
+    <string name="recover_password">recover password</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="perform_request">perform request</string>
+    <string name="account">account</string>
+</resources>
