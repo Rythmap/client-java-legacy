@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Melomap</string>
+    <string name="app_name">Melodymap</string>
     <string name="client_id">client_id</string>
     <string name="oauth">oauth</string>
     <string name="request">request</string>

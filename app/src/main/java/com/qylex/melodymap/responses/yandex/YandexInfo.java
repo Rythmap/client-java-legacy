@@ -1,4 +1,4 @@
-package com.qylex.melomap.responses.yandex;
+package com.qylex.melodymap.responses.yandex;
 
 import java.util.List;
 

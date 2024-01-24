@@ -1,4 +1,4 @@
-package com.qylex.melomap;
+package com.qylex.melodymap;
 
 import android.content.Context;
 

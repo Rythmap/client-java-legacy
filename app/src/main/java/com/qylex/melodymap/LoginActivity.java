@@ -1,4 +1,4 @@
-package com.qylex.melomap;
+package com.qylex.melodymap;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
@@ -9,11 +9,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.qylex.melomap.responses.account.AccountApi;
-import com.qylex.melomap.responses.account.AccountInfo;
-import com.qylex.melomap.responses.account.AccountLogin;
-import com.qylex.melomap.responses.account.AccountRegister;
-import com.qylex.melomap.responses.account.AuthResponse;
+import com.qylex.melodymap.responses.account.AccountApi;
+import com.qylex.melodymap.responses.account.AccountLogin;
+import com.qylex.melodymap.responses.account.AccountRegister;
+import com.qylex.melodymap.responses.account.AuthResponse;
 
 import java.io.IOException;
 

@@ -1,2 +1,2 @@
-# Melomap сlient
-Melomap client written in Java
+# Melodymap сlient
+Melodymap client written in Java

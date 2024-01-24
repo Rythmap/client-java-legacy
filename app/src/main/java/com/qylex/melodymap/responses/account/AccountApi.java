@@ -1,4 +1,4 @@
-package com.qylex.melomap.responses.account;
+package com.qylex.melodymap.responses.account;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

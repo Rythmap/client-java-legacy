@@ -1,11 +1,11 @@
-package com.qylex.melomap;
+package com.qylex.melodymap;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import static com.qylex.melomap.LoginActivity.errorDescriptions;
+import static com.qylex.melodymap.LoginActivity.errorDescriptions;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,8 +13,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.qylex.melomap.responses.account.AccountApi;
-import com.qylex.melomap.responses.account.AccountInfo;
+import com.qylex.melodymap.responses.account.AccountApi;
+import com.qylex.melodymap.responses.account.AccountInfo;
 
 import retrofit2.Call;
 import retrofit2.Callback;

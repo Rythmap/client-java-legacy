@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.qylex.melomap"
+    namespace = "com.qylex.melodymap"
     compileSdk = 34
 
     defaultConfig {

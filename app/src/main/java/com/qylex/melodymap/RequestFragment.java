@@ -1,8 +1,7 @@
-package com.qylex.melomap;
+package com.qylex.melodymap;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -12,10 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.qylex.melomap.responses.yandex.YandexApi;
-import com.qylex.melomap.responses.yandex.YandexInfo;
+import com.qylex.melodymap.responses.yandex.YandexApi;
+import com.qylex.melodymap.responses.yandex.YandexInfo;
 
-import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;

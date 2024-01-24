@@ -1,4 +1,6 @@
+*.iml
 /.idea/
 /.gradle/
 /app/build/
+/local.properties/
 /app/src/main/java/com/qylex/melomap/SecretData.java

@@ -1,4 +1,4 @@
-package com.qylex.melomap.responses.account;
+package com.qylex.melodymap.responses.account;
 
 public class AccountLogin {
     private String username;

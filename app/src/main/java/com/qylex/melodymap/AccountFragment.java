@@ -1,6 +1,6 @@
-package com.qylex.melomap;
+package com.qylex.melodymap;
 
-import static com.qylex.melomap.LoginActivity.errorDescriptions;
+import static com.qylex.melodymap.LoginActivity.errorDescriptions;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,16 +15,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.qylex.melomap.responses.account.AccountApi;
-import com.qylex.melomap.responses.account.AccountInfo;
-
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
+import com.qylex.melodymap.responses.account.AccountApi;
+import com.qylex.melodymap.responses.account.AccountInfo;
 
 import retrofit2.Call;
 import retrofit2.Callback;
