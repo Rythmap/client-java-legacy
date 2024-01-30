@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -24,35 +23,44 @@
             android:id="@+id/logoutButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="144dp"
+            android:layout_marginBottom="200dp"
             android:text="@string/logout"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline4"
-            app:layout_constraintHorizontal_bias="0.535"
-            app:layout_constraintStart_toStartOf="@+id/guideline" />
+            app:layout_constraintEnd_toStartOf="@+id/changeNickButton"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
+        <Button
+            android:id="@+id/changeNickButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="152dp" />
+            android:layout_marginBottom="200dp"
+            android:text="@string/password"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/logoutButton" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline2"
+        <Button
+            android:id="@+id/changePswdButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="59dp" />
+            android:layout_marginBottom="12dp"
+            android:text="@string/nickname"
+            app:layout_constraintBottom_toTopOf="@+id/changeNickButton"
+            app:layout_constraintEnd_toEndOf="@+id/changeNickButton"
+            app:layout_constraintHorizontal_bias="0.764"
+            app:layout_constraintStart_toStartOf="@+id/changeNickButton" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline4"
+        <TextView
+            android:id="@+id/changeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="261dp" />
+            android:layout_marginBottom="15dp"
+            android:text="change..."
+            app:layout_constraintBottom_toTopOf="@+id/changePswdButton"
+            app:layout_constraintEnd_toEndOf="@+id/changePswdButton"
+            app:layout_constraintStart_toStartOf="@+id/changePswdButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

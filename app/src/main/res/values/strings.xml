@@ -28,4 +28,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="perform_request">perform request</string>
     <string name="account">account</string>
+    <string name="nickname">nickname</string>
 </resources>

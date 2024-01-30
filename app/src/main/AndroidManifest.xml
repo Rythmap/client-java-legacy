@@ -12,14 +12,8 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/voop"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Melomap"
+        android:theme="@style/AppTheme"
         tools:targetApi="31" >
-        <activity
-            android:name=".LoadingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".AccountActivity"
-            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />

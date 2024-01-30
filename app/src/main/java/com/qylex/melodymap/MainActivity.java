@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.color.DynamicColors;
 import com.qylex.melodymap.responses.account.AccountApi;
 import com.qylex.melodymap.responses.account.AccountInfo;
 
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DynamicColors.applyToActivitiesIfAvailable(this.getApplication());
 
         BottomNavigationView bnv = findViewById(R.id.bottom_navigation);
 
@@ -61,8 +63,7 @@ public class MainActivity extends AppCompatActivity {
         if (token == null || token.isEmpty()) {
             runOnUiThread(() -> {
                 Toast.makeText(this, "token is empty", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 finish();
             });
         } else {
@@ -87,8 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
                             runOnUiThread(() -> {
                                 Toast.makeText(MainActivity.this, errorDescriptions.get(responseCode), Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                                startActivity(intent);
+                                startActivity(new Intent(MainActivity.this, LoginActivity.class));
                                 finish();
                             });
                         }
@@ -98,8 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
                         runOnUiThread(() -> {
                             Toast.makeText(MainActivity.this, getString(R.string.error_checking_token_validity) + responseCode, Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                            startActivity(intent);
+                            startActivity(new Intent(MainActivity.this, LoginActivity.class));
                             finish();
                         });
                     }
@@ -112,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
 
                     runOnUiThread(() -> {
                         Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                        startActivity(intent);
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                        finish();
                         finish();
                     });
                 }

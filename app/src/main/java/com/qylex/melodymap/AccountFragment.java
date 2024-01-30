@@ -2,7 +2,9 @@ package com.qylex.melodymap;
 
 import static com.qylex.melodymap.LoginActivity.errorDescriptions;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -45,7 +47,12 @@ public class AccountFragment extends Fragment {
         accountInfo = view.findViewById(R.id.accountInfoView);
         logout = view.findViewById(R.id.logoutButton);
 
-        getAccountInfo(token);
+        String savedAccountInfo = getSavedAccountInfo();
+        if (savedAccountInfo != null) {
+            accountInfo.setText(savedAccountInfo);
+        } else {
+            getAccountInfo(token);
+        }
 
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -77,22 +84,23 @@ public class AccountFragment extends Fragment {
                     if (response.isSuccessful()) {
                         AccountInfo accountInfoModel = response.body();
                         if (accountInfoModel != null) {
-                            String resultString = "Token Valid: " + accountInfoModel.isTokenValid() + "\n" +
+                            String resultString = "Token valid: " + accountInfoModel.isTokenValid() + "\n" +
                                     "Username: " + accountInfoModel.getUsername() + "\n" +
                                     "Email: " + accountInfoModel.getEmail() + "\n" +
-                                    "Email Confirmed: " + accountInfoModel.isEmailConfirmed() + "\n";
+                                    "Email confirmed: " + accountInfoModel.isEmailConfirmed();
+                            saveAccountInfo(resultString);
 
                             requireActivity().runOnUiThread(() -> accountInfo.setText(resultString));
                         } else {
-                        int responseCode = response.code();
-                        if (errorDescriptions.containsKey(responseCode)) {
-                            requireActivity().runOnUiThread(() -> accountInfo.setText(errorDescriptions.get(responseCode)));
-                            Log.d("Error", errorDescriptions.get(responseCode));
-                        } else {
-                            requireActivity().runOnUiThread(() -> accountInfo.setText(getString(R.string.unknown_error) + responseCode));
-                            Log.d("Error", String.valueOf(responseCode));
+                            int responseCode = response.code();
+                            if (errorDescriptions.containsKey(responseCode)) {
+                                requireActivity().runOnUiThread(() -> accountInfo.setText(errorDescriptions.get(responseCode)));
+                                Log.d("Error", errorDescriptions.get(responseCode));
+                            } else {
+                                requireActivity().runOnUiThread(() -> accountInfo.setText(getString(R.string.unknown_error) + responseCode));
+                                Log.d("Error", String.valueOf(responseCode));
+                            }
                         }
-                    }
                     }
                 }
             }
@@ -105,5 +113,15 @@ public class AccountFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private String getSavedAccountInfo() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("AccountInfoPrefs", Context.MODE_PRIVATE);
+        return prefs.getString("AccountInfoKey", null);
+    }
+
+    private void saveAccountInfo(String accountInfo) {
+        SharedPreferences prefs = requireContext().getSharedPreferences("AccountInfoPrefs", Context.MODE_PRIVATE);
+        prefs.edit().putString("AccountInfoKey", accountInfo).apply();
     }
 }
