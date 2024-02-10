@@ -26,7 +26,6 @@ public class TokenManager {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
         } catch (Exception e) {
-            Log.d("token", String.valueOf(e));
         }
     }
 

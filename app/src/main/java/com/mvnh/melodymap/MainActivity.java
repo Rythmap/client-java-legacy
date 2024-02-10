@@ -79,11 +79,9 @@ public class MainActivity extends AppCompatActivity {
                     int responseCode = response.code();
                     if (errorDescriptions.containsKey(responseCode)) {
                         if (responseCode == 200) {
-                            Log.d("Token", tokenManager.getToken());
                             runOnUiThread(() -> Toast.makeText(MainActivity.this, "ok", Toast.LENGTH_SHORT).show());
                         } else {
-                            Log.d("Token validation", errorDescriptions.get(responseCode));
-                            tokenManager.saveToken(null);
+                            tokenManager.clearToken();
 
                             runOnUiThread(() -> {
                                 Toast.makeText(MainActivity.this, errorDescriptions.get(responseCode), Toast.LENGTH_SHORT).show();
@@ -92,8 +90,7 @@ public class MainActivity extends AppCompatActivity {
                             });
                         }
                     } else {
-                        Log.d("Token validation", String.valueOf(responseCode));
-                        tokenManager.saveToken(null);
+                        tokenManager.clearToken();
 
                         runOnUiThread(() -> {
                             Toast.makeText(MainActivity.this, getString(R.string.error_checking_token_validity) + responseCode, Toast.LENGTH_SHORT).show();
@@ -105,8 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<AccountInfo> call, Throwable t) {
-                    Log.d("Token validation", t.getMessage());
-                    tokenManager.saveToken(null);
+                    tokenManager.clearToken();
 
                     runOnUiThread(() -> {
                         Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();

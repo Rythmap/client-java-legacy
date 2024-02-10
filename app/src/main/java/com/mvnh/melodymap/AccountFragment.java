@@ -54,7 +54,7 @@ public class AccountFragment extends Fragment {
         }
 
         logout.setOnClickListener(v -> {
-            tokenManager.saveToken(null);
+            tokenManager.clearToken();
             Intent intent = new Intent(requireContext(), AuthActivity.class);
             startActivity(intent);
             requireActivity().finishAffinity();
