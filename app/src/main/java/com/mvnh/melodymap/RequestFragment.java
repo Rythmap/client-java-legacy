@@ -1,4 +1,4 @@
-package com.qylex.melodymap;
+package com.mvnh.melodymap;
 
 import android.os.Bundle;
 
@@ -11,8 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.qylex.melodymap.responses.yandex.YandexApi;
-import com.qylex.melodymap.responses.yandex.YandexInfo;
+import com.mvnh.melodymap.responses.yandex.YandexApi;
+import com.mvnh.melodymap.responses.yandex.YandexInfo;
 
 import java.util.List;
 

@@ -3,15 +3,15 @@ plugins {
 }
 
 android {
-    namespace = "com.qylex.melodymap"
+    namespace = "com.mvnh.melodymap"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.qylex.melomap"
+        applicationId = "com.mvnh.melomap"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -28,6 +28,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding = true
     }
 }
 

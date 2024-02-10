@@ -1,4 +1,4 @@
-package com.qylex.melodymap.responses.yandex;
+package com.mvnh.melodymap.responses.yandex;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

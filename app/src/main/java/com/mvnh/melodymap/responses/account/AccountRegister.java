@@ -1,4 +1,4 @@
-package com.qylex.melodymap.responses.account;
+package com.mvnh.melodymap.responses.account;
 
 public class AccountRegister {
     private String username;
@@ -9,17 +9,5 @@ public class AccountRegister {
         this.username = username;
         this.password = password;
         this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
     }
 }

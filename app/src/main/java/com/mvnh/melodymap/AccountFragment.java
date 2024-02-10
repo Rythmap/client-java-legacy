@@ -1,6 +1,6 @@
-package com.qylex.melodymap;
+package com.mvnh.melodymap;
 
-import static com.qylex.melodymap.LoginActivity.errorDescriptions;
+import static com.mvnh.melodymap.auth.AuthActivity.errorDescriptions;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,8 +17,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.qylex.melodymap.responses.account.AccountApi;
-import com.qylex.melodymap.responses.account.AccountInfo;
+import com.mvnh.melodymap.auth.AuthActivity;
+import com.mvnh.melodymap.responses.account.AccountApi;
+import com.mvnh.melodymap.responses.account.AccountInfo;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,7 +63,7 @@ public class AccountFragment extends Fragment {
 
         logout.setOnClickListener(v -> {
             tokenManager.saveToken(null);
-            Intent intent = new Intent(requireContext(), LoginActivity.class);
+            Intent intent = new Intent(requireContext(), AuthActivity.class);
             startActivity(intent);
             requireActivity().finishAffinity();
         });

@@ -1,4 +1,4 @@
-package com.qylex.melodymap;
+package com.mvnh.melodymap;
 
 import android.content.Context;
 import android.content.SharedPreferences;

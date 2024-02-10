@@ -1,4 +1,4 @@
-package com.qylex.melodymap.responses.account;
+package com.mvnh.melodymap.responses.account;
 
 public class AccountLogin {
     private String username;
@@ -7,13 +7,5 @@ public class AccountLogin {
     public AccountLogin(String username, String password) {
         this.username = username;
         this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
     }
 }

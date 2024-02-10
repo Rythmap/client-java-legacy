@@ -1,4 +1,4 @@
-package com.qylex.melodymap.responses.account;
+package com.mvnh.melodymap.responses.account;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -8,11 +8,17 @@ public class AuthResponse {
 
     private String detail;
 
+    private String status;
+
     public String getAccessToken() {
         return accessToken;
     }
 
     public String getDetail() {
         return detail;
+    }
+
+    private String getStatus() {
+        return status;
     }
 }
