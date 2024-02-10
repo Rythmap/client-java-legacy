@@ -29,8 +29,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AccountFragment extends Fragment {
 
-    SwipeRefreshLayout swipeRefreshLayout;
-
     private TokenManager tokenManager;
 
     private TextView accountInfo;
@@ -54,12 +52,6 @@ public class AccountFragment extends Fragment {
         } else {
             getAccountInfo(token);
         }
-
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            getAccountInfo(token);
-            swipeRefreshLayout.setRefreshing(false);
-        });
 
         logout.setOnClickListener(v -> {
             tokenManager.saveToken(null);
