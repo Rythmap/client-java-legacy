@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.mvnh.melodymap.MainActivity;
 import com.mvnh.melodymap.R;
 import com.mvnh.melodymap.TokenManager;
+import com.mvnh.melodymap.responses.ServiceGenerator;
 import com.mvnh.melodymap.responses.account.AccountApi;
 import com.mvnh.melodymap.responses.account.AccountRegister;
 import com.mvnh.melodymap.responses.account.AuthResponse;
@@ -50,13 +52,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void performRegister(String username, String password, String email) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://melomap-production.up.railway.app/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        AccountApi accountApi = retrofit.create(AccountApi.class);
-
+        AccountApi accountApi = ServiceGenerator.createService(AccountApi.class);
         Call<AuthResponse> call = accountApi.register(new AccountRegister(username, password, email));
 
         editEmail.setEnabled(false);
@@ -68,18 +64,23 @@ public class RegisterActivity extends AppCompatActivity {
            try {
                Response<AuthResponse> response = call.execute();
                if (response.isSuccessful()) {
+                   Log.d("Response", String.valueOf(response.code()));
                    AuthResponse authResponse = response.body();
-                   tokenManager.saveToken(authResponse.getAccessToken());
+                   String accessToken = authResponse.getAccessToken();
+                   Log.d("Access token", accessToken);
+                   tokenManager.saveToken(accessToken);
                    runOnUiThread(() -> {
                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                        finish();
                        Toast.makeText(RegisterActivity.this, errorDescriptions.get(response.code()), Toast.LENGTH_SHORT).show();
                    });
                } else {
-                   int errorCode = response.code();
-                   String errorMessage = errorDescriptions.containsKey(errorCode)
-                           ? errorDescriptions.get(errorCode)
-                           : getString(R.string.unknown_error) + errorCode;
+                   int responseCode = response.code();
+                   Log.e("Response", String.valueOf(responseCode));
+                   String errorMessage = errorDescriptions.containsKey(responseCode)
+                           ? errorDescriptions.get(responseCode)
+                           : getString(R.string.unknown_error) + responseCode;
+                   Log.e("Error message", errorMessage);
                    runOnUiThread(() -> {
                        Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                        editUsername.setEnabled(true);
@@ -89,6 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
                    });
                }
            } catch (IOException e) {
+               Log.e("Exception", String.valueOf(e));
                runOnUiThread(() -> {
                    Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                    editEmail.setEnabled(true);

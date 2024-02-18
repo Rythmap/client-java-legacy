@@ -1,9 +1,12 @@
 package com.mvnh.melodymap;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.mvnh.melodymap.responses.ServiceGenerator;
 import com.mvnh.melodymap.responses.yandex.YandexApi;
 import com.mvnh.melodymap.responses.yandex.YandexInfo;
 
@@ -25,7 +29,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RequestFragment extends Fragment {
 
     private TextView yandexMusicResultView, soundCloudResultView;
-    private String yandexMusicResultText = "";
 
     private EditText yandexMusicToken;
     private EditText soundCloudOAuth, soundCloudClientID;
@@ -46,61 +49,69 @@ public class RequestFragment extends Fragment {
 
         request = view.findViewById(R.id.requestButton);
 
-        request.setOnClickListener(v -> {
-            yandexMusicResultView.setText(R.string.wait);
+        String yandexResponse = getYandexResponse();
+        if (yandexResponse != null) {
+            Log.d("Yandex response", yandexResponse);
+            yandexMusicResultView.setText(yandexResponse);
+        }
 
-            String yaToken = yandexMusicToken.getText().toString();
-            String scOAuth = soundCloudOAuth.getText().toString();
-            String scClientID = soundCloudClientID.getText().toString();
-
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://melomap-production.up.railway.app/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            YandexApi yandexApi = retrofit.create(YandexApi.class);
-
-            Call<YandexInfo> yandexCall = yandexApi.getCurrentTrack(yaToken);
-
-            yandexCall.enqueue(new Callback<YandexInfo>() {
-                @Override
-                public void onResponse(Call<YandexInfo> call, Response<YandexInfo> response) {
-                    if (isAdded() && getActivity() != null) {
-                        if (response.isSuccessful()) {
-                            YandexInfo yandexInfo = response.body();
-                            if (yandexInfo != null) {
-                                List<YandexInfo.Artist> yandexArtists = yandexInfo.getArtists();
-                                StringBuilder yandexArtistsNames = new StringBuilder();
-                                for (int i = 0; i < yandexArtists.size(); i++) {
-                                    YandexInfo.Artist artist = yandexArtists.get(i);
-                                    if (i != 0) {
-                                        yandexArtistsNames.append(", ");
-                                    }
-                                    yandexArtistsNames.append(artist.getName());
-                                }
-
-                                String yaDisplayText = yandexArtistsNames + " - " + yandexInfo.getTitle();
-                                yandexMusicResultText = yaDisplayText;
-
-                                requireActivity().runOnUiThread(() -> yandexMusicResultView.setText(yaDisplayText));
-                            }
-                        } else {
-                            int responseCode = response.code();
-                            yandexMusicResultText = "connection failed " + responseCode;
-                            requireActivity().runOnUiThread(() -> yandexMusicResultView.setText(yandexMusicResultText));
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<YandexInfo> call, Throwable t) {
-                    if (isAdded() && getActivity() != null) {
-                        yandexMusicResultText = t.getMessage();
-                        requireActivity().runOnUiThread(() -> yandexMusicResultView.setText(yandexMusicResultText));
-                    }
-                }
-            });
-        });
+        request.setOnClickListener(v -> yandexRequest(yandexMusicToken.getText().toString()));
 
         return view;
+    }
+
+    private void yandexRequest(String token) {
+        YandexApi yandexApi = ServiceGenerator.createService(YandexApi.class);
+        Call<YandexInfo> call = yandexApi.getCurrentTrack(token);
+
+        call.enqueue(new Callback<YandexInfo>() {
+            @Override
+            public void onResponse(Call<YandexInfo> call, Response<YandexInfo> response) {
+                if (isAdded() && getActivity() != null) {
+                    if (response.isSuccessful()) {
+                        Log.d("Response", String.valueOf(response.code()));
+                        YandexInfo yandexInfo = response.body();
+                        if (yandexInfo != null) {
+                            List<YandexInfo.Artist> artists = yandexInfo.getArtists();
+                            StringBuilder artistsNames = new StringBuilder();
+                            for (int i = 0; i < artists.size(); i++) {
+                                YandexInfo.Artist artist = artists.get(i);
+                                if (i != 0) {
+                                    artistsNames.append(", ");
+                                }
+                                artistsNames.append(artist.getName());
+                            }
+
+                            saveYandexResponse(artistsNames + " - " + yandexInfo.getTitle());
+                            Log.d("Yandex response", getYandexResponse());
+                            requireActivity().runOnUiThread(() -> yandexMusicResultView.setText(getYandexResponse()));
+                        }
+                    } else {
+                        saveYandexResponse("connection failed " + response.code());
+                        Log.e("Yandex response", getYandexResponse());
+                        requireActivity().runOnUiThread(() -> yandexMusicResultView.setText(getYandexResponse()));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<YandexInfo> call, Throwable t) {
+                if (isAdded() && getActivity() != null) {
+                    saveYandexResponse(t.getMessage());
+                    Log.e("Yandex response", getYandexResponse());
+                    requireActivity().runOnUiThread(() -> yandexMusicResultView.setText(getYandexResponse()));
+                }
+            }
+        });
+    }
+
+    private String getYandexResponse() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("YandexResponsePrefs", Context.MODE_PRIVATE);
+        return prefs.getString("YandexResponseKey", null);
+    }
+
+    private void saveYandexResponse(String yandexResponse) {
+        SharedPreferences prefs = requireContext().getSharedPreferences("YandexResponsePrefs", Context.MODE_PRIVATE);
+        prefs.edit().putString("YandexResponseKey", yandexResponse).apply();
     }
 }

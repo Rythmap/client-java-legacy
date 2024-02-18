@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mvnh.melodymap.auth.AuthActivity;
+import com.mvnh.melodymap.responses.ServiceGenerator;
 import com.mvnh.melodymap.responses.account.AccountApi;
 import com.mvnh.melodymap.responses.account.AccountInfo;
 
@@ -46,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.account) {
                 loadFragment(new AccountFragment());
                 return true;
+            } else if (item.getItemId() == R.id.map) {
+                loadFragment(new MapFragment());
+                return true;
             }
             return false;
         });
@@ -59,26 +63,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void tokenValidation() {
         String token = tokenManager.getToken();
+        Log.d("Token", token);
         if (token == null || token.isEmpty()) {
             runOnUiThread(() -> {
+                Log.e("Token", tokenManager.getToken());
                 Toast.makeText(this, "token is empty", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(MainActivity.this, AuthActivity.class));
                 finish();
             });
         } else {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://melomap-production.up.railway.app/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            AccountApi accountApi = retrofit.create(AccountApi.class);
-
+            AccountApi accountApi = ServiceGenerator.createService(AccountApi.class);
             Call<AccountInfo> accountInfoCall = accountApi.getAccountInfo(token);
             accountInfoCall.enqueue(new Callback<AccountInfo>() {
                 @Override
                 public void onResponse(Call<AccountInfo> call, Response<AccountInfo> response) {
                     int responseCode = response.code();
+                    Log.d("Response", String.valueOf(responseCode));
                     if (errorDescriptions.containsKey(responseCode)) {
                         if (responseCode == 200) {
+                            Log.d("Token validation", "Successful");
                             runOnUiThread(() -> Toast.makeText(MainActivity.this, "ok", Toast.LENGTH_SHORT).show());
                         } else {
                             tokenManager.clearToken();
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(new Intent(MainActivity.this, AuthActivity.class));
                                 finish();
                             });
+                            Log.e("Token validation", errorDescriptions.get(responseCode));
                         }
                     } else {
                         tokenManager.clearToken();
@@ -97,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
                             startActivity(new Intent(MainActivity.this, AuthActivity.class));
                             finish();
                         });
+                        Log.e("Token validation", getString(R.string.error_checking_token_validity));
                     }
                 }
 
@@ -108,8 +113,8 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(MainActivity.this, AuthActivity.class));
                         finish();
-                        finish();
                     });
+                    Log.e("Token validation", t.getMessage());
                 }
             });
         }

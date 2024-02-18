@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.mvnh.melodymap.MainActivity;
 import com.mvnh.melodymap.R;
 import com.mvnh.melodymap.TokenManager;
+import com.mvnh.melodymap.responses.ServiceGenerator;
 import com.mvnh.melodymap.responses.account.AccountApi;
 import com.mvnh.melodymap.responses.account.AccountLogin;
 import com.mvnh.melodymap.responses.account.AuthResponse;
@@ -50,13 +52,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void performLogin(String username, String password) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://melomap-production.up.railway.app/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        AccountApi accountApi = retrofit.create(AccountApi.class);
-
+        AccountApi accountApi = ServiceGenerator.createService(AccountApi.class);
         Call<AuthResponse> call = accountApi.login(new AccountLogin(username, password));
 
         editUsername.setEnabled(false);
@@ -67,18 +63,25 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 Response<AuthResponse> response = call.execute();
                 if (response.isSuccessful()) {
+                    Log.d("Response", String.valueOf(response.code()));
                     AuthResponse authResponse = response.body();
-                    tokenManager.saveToken(authResponse.getAccessToken());
+                    Log.d("Auth response", String.valueOf(authResponse));
+                    String accessToken = authResponse.getAccessToken();
+                    Log.d("Access token", accessToken);
+                    tokenManager.saveToken(accessToken);
                     runOnUiThread(() -> {
+                        Log.d("Successful response intent", "running main activity after successful response");
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                        finish();
-                        Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_SHORT).show();
+                        finishAffinity();
+                        Toast.makeText(LoginActivity.this, "successful login", Toast.LENGTH_SHORT).show();
                     });
                 } else {
-                    int errorCode = response.code();
-                    String errorMessage = errorDescriptions.containsKey(errorCode)
-                            ? errorDescriptions.get(errorCode)
-                            : getString(R.string.unknown_error) + errorCode;
+                    int responseCode = response.code();
+                    Log.e("Not successful response", String.valueOf(responseCode));
+                    String errorMessage = errorDescriptions.containsKey(responseCode)
+                            ? errorDescriptions.get(responseCode)
+                            : getString(R.string.unknown_error) + responseCode;
+                    Log.e("Error message", errorMessage);
                     runOnUiThread(() -> {
                         Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                         editUsername.setEnabled(true);
@@ -87,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                     });
                 }
             } catch (IOException e) {
+                Log.e("Exception occured", String.valueOf(e));
                 runOnUiThread(() -> {
                     Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     editUsername.setEnabled(true);

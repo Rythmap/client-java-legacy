@@ -2,6 +2,7 @@ package com.mvnh.melodymap.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,6 +47,7 @@ public class AuthActivity extends AppCompatActivity {
 
         String token = tokenManager.getToken();
         if (token != null && !token.isEmpty()) {
+            Log.d("Auth token validation", "token is not empty, running MainActivity");
             runOnUiThread(() -> {
                 Intent intent = new Intent(AuthActivity.this, MainActivity.class);
                 startActivity(intent);

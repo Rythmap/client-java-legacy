@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.mvnh.melodymap.auth.AuthActivity;
+import com.mvnh.melodymap.responses.ServiceGenerator;
 import com.mvnh.melodymap.responses.account.AccountApi;
 import com.mvnh.melodymap.responses.account.AccountInfo;
 
@@ -46,15 +47,13 @@ public class AccountFragment extends Fragment {
         accountInfo = view.findViewById(R.id.accountInfoView);
         logout = view.findViewById(R.id.logoutButton);
 
-        String savedAccountInfo = getSavedAccountInfo();
-        if (savedAccountInfo != null) {
-            accountInfo.setText(savedAccountInfo);
-        } else {
-            getAccountInfo(token);
-        }
+        getAccountInfo(token);
+        Log.d("getAccountInfo method executed", token);
+        accountInfo.setText(getSavedAccountInfo());
 
         logout.setOnClickListener(v -> {
             tokenManager.clearToken();
+            Log.d("Logout", "Logout");
             Intent intent = new Intent(requireContext(), AuthActivity.class);
             startActivity(intent);
             requireActivity().finishAffinity();
@@ -64,34 +63,34 @@ public class AccountFragment extends Fragment {
     }
 
     private void getAccountInfo(String token) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://melomap-production.up.railway.app/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        AccountApi accountApi = retrofit.create(AccountApi.class);
+        AccountApi accountApi = ServiceGenerator.createService(AccountApi.class);
         Call<AccountInfo> accountInfoCall = accountApi.getAccountInfo(token);
         accountInfoCall.enqueue(new Callback<AccountInfo>() {
             @Override
             public void onResponse(Call<AccountInfo> call, Response<AccountInfo> response) {
                 if (isAdded() && getActivity() != null) {
                     if (response.isSuccessful()) {
-                        AccountInfo accountInfoModel = response.body();
-                        if (accountInfoModel != null) {
-                            String resultString = "Token valid: " + accountInfoModel.isTokenValid() + "\n" +
-                                    "Username: " + accountInfoModel.getUsername() + "\n" +
-                                    "Email: " + accountInfoModel.getEmail() + "\n" +
-                                    "Email confirmed: " + accountInfoModel.isEmailConfirmed();
+                        Log.d("Response", String.valueOf(response.code()));
+                        AccountInfo body = response.body();
+                        Log.d("Account info", String.valueOf(body));
+                        if (body != null) {
+                            String resultString = "Token valid: " + body.isTokenValid() + "\n" +
+                                    "Username: " + body.getUsername() + "\n" +
+                                    "Email: " + body.getEmail() + "\n" +
+                                    "Email confirmed: " + body.isEmailConfirmed();
+                            Log.d("Result string", resultString);
                             saveAccountInfo(resultString);
 
                             requireActivity().runOnUiThread(() -> accountInfo.setText(resultString));
                         } else {
                             int responseCode = response.code();
+                            Log.e("Response", String.valueOf(response.code()));
                             if (errorDescriptions.containsKey(responseCode)) {
                                 requireActivity().runOnUiThread(() -> accountInfo.setText(errorDescriptions.get(responseCode)));
-                                Log.d("Error", errorDescriptions.get(responseCode));
+                                Log.e("Error", errorDescriptions.get(responseCode));
                             } else {
                                 requireActivity().runOnUiThread(() -> accountInfo.setText(getString(R.string.unknown_error) + responseCode));
-                                Log.d("Error", String.valueOf(responseCode));
+                                Log.e("Error", String.valueOf(responseCode));
                             }
                         }
                     }
@@ -102,7 +101,7 @@ public class AccountFragment extends Fragment {
             public void onFailure(Call<AccountInfo> call, Throwable t) {
                 if (isAdded() && getActivity() != null) {
                     requireActivity().runOnUiThread(() -> accountInfo.setText(t.getMessage()));
-                    Log.d("Retrofit Exception", t.getMessage());
+                    Log.e("Error", t.getMessage());
                 }
             }
         });
