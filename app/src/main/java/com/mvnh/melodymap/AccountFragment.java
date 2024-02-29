@@ -7,17 +7,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.mvnh.melodymap.auth.AuthActivity;
+import com.mvnh.melodymap.databinding.FragmentAccountBinding;
 import com.mvnh.melodymap.responses.ServiceGenerator;
 import com.mvnh.melodymap.responses.account.AccountApi;
 import com.mvnh.melodymap.responses.account.AccountInfo;
@@ -25,73 +28,64 @@ import com.mvnh.melodymap.responses.account.AccountInfo;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AccountFragment extends Fragment {
-
+    private FragmentAccountBinding binding;
+    private AccountViewModel accountVM;
     private TokenManager tokenManager;
-
-    private TextView accountInfo;
-
-    private Button logout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_account, container, false);
+        binding = FragmentAccountBinding.inflate(inflater, container, false);
+        accountVM = new ViewModelProvider(getActivity()).get(AccountViewModel.class);
+        binding.setViewModel(accountVM);
 
         tokenManager = new TokenManager(requireContext());
-        String token = tokenManager.getToken();
 
-        accountInfo = view.findViewById(R.id.accountInfoView);
-        logout = view.findViewById(R.id.logoutButton);
+        return binding.getRoot();
+    }
 
-        getAccountInfo(token);
-        Log.d("getAccountInfo method executed", token);
-        accountInfo.setText(getSavedAccountInfo());
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        binding.retriveAccountInfoButton.setOnClickListener(v -> retrieveAccountInfo(tokenManager.getToken()));
 
-        logout.setOnClickListener(v -> {
+        binding.logoutButton.setOnClickListener(v -> {
             tokenManager.clearToken();
-            Log.d("Logout", "Logout");
+            Log.d("Melodymap", "Logout");
             Intent intent = new Intent(requireContext(), AuthActivity.class);
             startActivity(intent);
             requireActivity().finishAffinity();
         });
-
-        return view;
     }
 
-    private void getAccountInfo(String token) {
+    public void retrieveAccountInfo(String token) {
         AccountApi accountApi = ServiceGenerator.createService(AccountApi.class);
         Call<AccountInfo> accountInfoCall = accountApi.getAccountInfo(token);
         accountInfoCall.enqueue(new Callback<AccountInfo>() {
             @Override
             public void onResponse(Call<AccountInfo> call, Response<AccountInfo> response) {
+                // добавить обработку других кодов!!!!!
                 if (isAdded() && getActivity() != null) {
                     if (response.isSuccessful()) {
-                        Log.d("Response", String.valueOf(response.code()));
+                        Log.d("Melodymap", "response code" + response.code());
                         AccountInfo body = response.body();
-                        Log.d("Account info", String.valueOf(body));
-                        if (body != null) {
-                            String resultString = "Token valid: " + body.isTokenValid() + "\n" +
-                                    "Username: " + body.getUsername() + "\n" +
-                                    "Email: " + body.getEmail() + "\n" +
-                                    "Email confirmed: " + body.isEmailConfirmed();
-                            Log.d("Result string", resultString);
-                            saveAccountInfo(resultString);
-
-                            requireActivity().runOnUiThread(() -> accountInfo.setText(resultString));
+                        Log.d("Melodymap", "body" + body.toString());
+                        String resultString = "Token valid: " + body.isTokenValid() + "\n" +
+                                "Username: " + body.getUsername() + "\n" +
+                                "Email: " + body.getEmail() + "\n" +
+                                "Email confirmed: " + body.isEmailConfirmed();
+                        Log.d("Melodymap", resultString);
+                        accountVM.setAccountInfo(resultString);
+                    } else {
+                        Log.d("Melodymap", "response code" + response.code());
+                        if (errorDescriptions.containsKey(response.code())) {
+                            accountVM.setAccountInfo(errorDescriptions.get(response.code()));
+                            Log.e("Melodymap", errorDescriptions.get(response.code()));
                         } else {
-                            int responseCode = response.code();
-                            Log.e("Response", String.valueOf(response.code()));
-                            if (errorDescriptions.containsKey(responseCode)) {
-                                requireActivity().runOnUiThread(() -> accountInfo.setText(errorDescriptions.get(responseCode)));
-                                Log.e("Error", errorDescriptions.get(responseCode));
-                            } else {
-                                requireActivity().runOnUiThread(() -> accountInfo.setText(getString(R.string.unknown_error) + responseCode));
-                                Log.e("Error", String.valueOf(responseCode));
-                            }
+                            accountVM.setAccountInfo(getString(R.string.unknown_error) + response.code());
+                            Log.e("Melodymap", String.valueOf(response.code()));
                         }
                     }
                 }
@@ -100,20 +94,12 @@ public class AccountFragment extends Fragment {
             @Override
             public void onFailure(Call<AccountInfo> call, Throwable t) {
                 if (isAdded() && getActivity() != null) {
-                    requireActivity().runOnUiThread(() -> accountInfo.setText(t.getMessage()));
-                    Log.e("Error", t.getMessage());
+                    accountVM.setAccountInfo(t.getMessage());
+                    Log.e("Melodymap", t.getMessage());
                 }
             }
         });
-    }
 
-    private String getSavedAccountInfo() {
-        SharedPreferences prefs = requireContext().getSharedPreferences("AccountInfoPrefs", Context.MODE_PRIVATE);
-        return prefs.getString("AccountInfoKey", null);
-    }
-
-    private void saveAccountInfo(String accountInfo) {
-        SharedPreferences prefs = requireContext().getSharedPreferences("AccountInfoPrefs", Context.MODE_PRIVATE);
-        prefs.edit().putString("AccountInfoKey", accountInfo).apply();
+        accountVM.getAccountInfo().observe(getViewLifecycleOwner(), accountInfo -> binding.accountInfoView.setText(accountInfo));
     }
 }

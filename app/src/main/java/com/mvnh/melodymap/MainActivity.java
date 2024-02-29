@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    private void tokenValidation() {
+    public void tokenValidation() {
         String token = tokenManager.getToken();
         Log.d("Token", token);
         if (token == null || token.isEmpty()) {
@@ -77,31 +77,30 @@ public class MainActivity extends AppCompatActivity {
             accountInfoCall.enqueue(new Callback<AccountInfo>() {
                 @Override
                 public void onResponse(Call<AccountInfo> call, Response<AccountInfo> response) {
-                    int responseCode = response.code();
-                    Log.d("Response", String.valueOf(responseCode));
-                    if (errorDescriptions.containsKey(responseCode)) {
-                        if (responseCode == 200) {
-                            Log.d("Token validation", "Successful");
+                    Log.d("Melodymap", String.valueOf(response.code()));
+                    if (errorDescriptions.containsKey(response.code())) {
+                        if (response.code() == 200) {
+                            Log.d("Melodymap", "token validation successful");
                             runOnUiThread(() -> Toast.makeText(MainActivity.this, "ok", Toast.LENGTH_SHORT).show());
                         } else {
                             tokenManager.clearToken();
 
                             runOnUiThread(() -> {
-                                Toast.makeText(MainActivity.this, errorDescriptions.get(responseCode), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, errorDescriptions.get(response.code()), Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(MainActivity.this, AuthActivity.class));
                                 finish();
                             });
-                            Log.e("Token validation", errorDescriptions.get(responseCode));
+                            Log.e("Token validation", errorDescriptions.get(response.code()));
                         }
                     } else {
                         tokenManager.clearToken();
 
                         runOnUiThread(() -> {
-                            Toast.makeText(MainActivity.this, getString(R.string.error_checking_token_validity) + responseCode, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, getString(R.string.error_checking_token_validity) + response.code(), Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(MainActivity.this, AuthActivity.class));
                             finish();
                         });
-                        Log.e("Token validation", getString(R.string.error_checking_token_validity));
+                        Log.e("Melodymap", getString(R.string.error_checking_token_validity));
                     }
                 }
 
@@ -114,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(new Intent(MainActivity.this, AuthActivity.class));
                         finish();
                     });
-                    Log.e("Token validation", t.getMessage());
+                    Log.e("Melodymap", t.getMessage());
                 }
             });
         }

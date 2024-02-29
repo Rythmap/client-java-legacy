@@ -25,4 +25,14 @@ public class AccountInfo {
     public boolean isEmailConfirmed() {
         return emailConfirmed;
     }
+
+    @Override
+    public String toString() {
+        return "AccountInfo{" +
+                "tokenValid=" + tokenValid +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", emailConfirmed=" + emailConfirmed +
+                '}';
+    }
 }

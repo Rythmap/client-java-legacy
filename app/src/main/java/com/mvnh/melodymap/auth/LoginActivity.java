@@ -9,14 +9,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.textfield.TextInputEditText;
 import com.mvnh.melodymap.MainActivity;
 import com.mvnh.melodymap.R;
 import com.mvnh.melodymap.TokenManager;
+import com.mvnh.melodymap.databinding.ActivityAuthBinding;
+import com.mvnh.melodymap.databinding.ActivityLoginBinding;
 import com.mvnh.melodymap.responses.ServiceGenerator;
 import com.mvnh.melodymap.responses.account.AccountApi;
 import com.mvnh.melodymap.responses.account.AccountLogin;
@@ -26,76 +25,66 @@ import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
-    private TextInputEditText editUsername;
-    private TextInputEditText editPassword;
-    private Button loginButton;
-    private TextView recoverPswdButton;
-
+    private ActivityLoginBinding binding;
     private TokenManager tokenManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        editUsername = findViewById(R.id.usernameField);
-        editPassword = findViewById(R.id.passwordField);
-        loginButton = findViewById(R.id.loginButton);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         tokenManager = new TokenManager(LoginActivity.this);
 
-        loginButton.setOnClickListener(v -> performLogin(editUsername.getText().toString(), editPassword.getText().toString()));
+        binding.loginButton.setOnClickListener(v -> performLogin(
+                binding.usernameField.getText().toString(),
+                binding.passwordField.getText().toString()));
     }
 
     private void performLogin(String username, String password) {
         AccountApi accountApi = ServiceGenerator.createService(AccountApi.class);
         Call<AuthResponse> call = accountApi.login(new AccountLogin(username, password));
 
-        editUsername.setEnabled(false);
-        editPassword.setEnabled(false);
-        loginButton.setEnabled(false);
+        binding.usernameField.setEnabled(false);
+        binding.passwordField.setEnabled(false);
+        binding.loginButton.setEnabled(false);
 
         new Thread(() -> {
             try {
                 Response<AuthResponse> response = call.execute();
+                Log.d("Melodymap", String.valueOf(response));
                 if (response.isSuccessful()) {
-                    Log.d("Response", String.valueOf(response.code()));
+                    Log.d("Melodymap", "response code " + response.code());
                     AuthResponse authResponse = response.body();
-                    Log.d("Auth response", String.valueOf(authResponse));
                     String accessToken = authResponse.getAccessToken();
-                    Log.d("Access token", accessToken);
                     tokenManager.saveToken(accessToken);
+                    Log.d("Melodymap", "access token" + accessToken);
                     runOnUiThread(() -> {
-                        Log.d("Successful response intent", "running main activity after successful response");
+                        Log.d("Melodymap", "running main activity after successful response");
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finishAffinity();
-                        Toast.makeText(LoginActivity.this, "successful login", Toast.LENGTH_SHORT).show();
                     });
                 } else {
-                    int responseCode = response.code();
-                    Log.e("Not successful response", String.valueOf(responseCode));
-                    String errorMessage = errorDescriptions.containsKey(responseCode)
-                            ? errorDescriptions.get(responseCode)
-                            : getString(R.string.unknown_error) + responseCode;
-                    Log.e("Error message", errorMessage);
+                    String errorMessage = errorDescriptions.containsKey(response.code())
+                            ? errorDescriptions.get(response.code())
+                            : getString(R.string.unknown_error) + response.code();
+                    Log.e("Melodymap", response.code() + errorMessage);
                     runOnUiThread(() -> {
                         Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                        editUsername.setEnabled(true);
-                        editPassword.setEnabled(true);
-                        loginButton.setEnabled(true);
+                        binding.usernameField.setEnabled(true);
+                        binding.passwordField.setEnabled(true);
+                        binding.loginButton.setEnabled(true);
                     });
                 }
             } catch (IOException e) {
-                Log.e("Exception occured", String.valueOf(e));
+                Log.e("Melodymap", String.valueOf(e));
                 runOnUiThread(() -> {
                     Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    editUsername.setEnabled(true);
-                    editPassword.setEnabled(true);
-                    loginButton.setEnabled(true);
+                    binding.usernameField.setEnabled(true);
+                    binding.passwordField.setEnabled(true);
+                    binding.loginButton.setEnabled(true);
                 });
             }
         }).start();

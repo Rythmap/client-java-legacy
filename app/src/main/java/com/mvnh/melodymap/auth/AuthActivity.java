@@ -3,21 +3,19 @@ package com.mvnh.melodymap.auth;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.mvnh.melodymap.MainActivity;
 import com.mvnh.melodymap.R;
 import com.mvnh.melodymap.TokenManager;
+import com.mvnh.melodymap.databinding.ActivityAuthBinding;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class AuthActivity extends AppCompatActivity {
-
-    private Button loginButton;
-    private Button registerButton;
+    private ActivityAuthBinding binding;
     private TokenManager tokenManager;
 
     public static Map<Integer, String> errorDescriptions = new HashMap<>();
@@ -31,23 +29,22 @@ public class AuthActivity extends AppCompatActivity {
         errorDescriptions.put(406, "username already registered");
         errorDescriptions.put(407, "username change failed");
         errorDescriptions.put(411, "invalid data");
-        errorDescriptions.put(200, "account registered successfully!");
+        errorDescriptions.put(200, "all good");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auth);
-        loginButton = findViewById(R.id.loginButton);
-        registerButton = findViewById(R.id.registerButton);
+        binding = ActivityAuthBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         tokenManager = new TokenManager(AuthActivity.this);
 
-        loginButton.setOnClickListener(v -> startActivity(new Intent(AuthActivity.this, LoginActivity.class)));
-        registerButton.setOnClickListener(v -> startActivity(new Intent(AuthActivity.this, RegisterActivity.class)));
+        binding.loginButton.setOnClickListener(v -> startActivity(new Intent(AuthActivity.this, LoginActivity.class)));
+        binding.registerButton.setOnClickListener(v -> startActivity(new Intent(AuthActivity.this, RegisterActivity.class)));
 
         String token = tokenManager.getToken();
         if (token != null && !token.isEmpty()) {
-            Log.d("Auth token validation", "token is not empty, running MainActivity");
+            Log.d("Melodymap", "token is not empty, running MainActivity");
             runOnUiThread(() -> {
                 Intent intent = new Intent(AuthActivity.this, MainActivity.class);
                 startActivity(intent);

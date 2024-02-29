@@ -48,7 +48,7 @@
             android:id="@+id/usernameField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/username"
+            android:hint="@string/username_or_email"
             android:maxLines="1"
             android:inputType=""/>
     </com.google.android.material.textfield.TextInputLayout>
