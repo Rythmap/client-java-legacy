@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.mvnh.melodymap.MainActivity;
@@ -60,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
                     AuthResponse authResponse = response.body();
                     String accessToken = authResponse.getAccessToken();
                     tokenManager.saveToken(accessToken);
-                    Log.d("Melodymap", "access token" + accessToken);
+                    Log.d("Melodymap", "access token " + accessToken);
                     runOnUiThread(() -> {
                         Log.d("Melodymap", "running main activity after successful response");
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));

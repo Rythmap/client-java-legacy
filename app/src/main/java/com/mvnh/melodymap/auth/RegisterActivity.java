@@ -2,17 +2,16 @@ package com.mvnh.melodymap.auth;
 
 import static com.mvnh.melodymap.auth.AuthActivity.errorDescriptions;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.mvnh.melodymap.MainActivity;
 import com.mvnh.melodymap.R;
 import com.mvnh.melodymap.TokenManager;
-import com.mvnh.melodymap.databinding.ActivityLoginBinding;
 import com.mvnh.melodymap.databinding.ActivityRegisterBinding;
 import com.mvnh.melodymap.responses.ServiceGenerator;
 import com.mvnh.melodymap.responses.account.AccountApi;

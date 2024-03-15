@@ -61,6 +61,8 @@ public class RequestFragment extends Fragment {
     }
 
     private void yandexRequest(String token) {
+        yandexMusicResultView.setText(R.string.wait);
+
         YandexApi yandexApi = ServiceGenerator.createService(YandexApi.class);
         Call<YandexInfo> call = yandexApi.getCurrentTrack(token);
 

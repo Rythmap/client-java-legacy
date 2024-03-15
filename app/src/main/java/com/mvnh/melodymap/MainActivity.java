@@ -1,6 +1,8 @@
 package com.mvnh.melodymap;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -8,11 +10,15 @@ import androidx.fragment.app.FragmentTransaction;
 import static com.mvnh.melodymap.auth.AuthActivity.errorDescriptions;
 
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.shape.CornerFamily;
+import com.google.android.material.shape.MaterialShapeDrawable;
+import com.google.android.material.shape.ShapeAppearanceModel;
 import com.mvnh.melodymap.auth.AuthActivity;
 import com.mvnh.melodymap.responses.ServiceGenerator;
 import com.mvnh.melodymap.responses.account.AccountApi;
@@ -32,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        EdgeToEdge.enable(this);
 
         BottomNavigationView bnv = findViewById(R.id.mainBottomNavigation);
-
         tokenManager = new TokenManager(this);
         tokenValidation();
 

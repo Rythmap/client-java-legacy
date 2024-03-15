@@ -35,7 +35,7 @@ public class AccountFragment extends Fragment {
     private TokenManager tokenManager;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentAccountBinding.inflate(inflater, container, false);
         accountVM = new ViewModelProvider(getActivity()).get(AccountViewModel.class);
@@ -65,8 +65,7 @@ public class AccountFragment extends Fragment {
         Call<AccountInfo> accountInfoCall = accountApi.getAccountInfo(token);
         accountInfoCall.enqueue(new Callback<AccountInfo>() {
             @Override
-            public void onResponse(Call<AccountInfo> call, Response<AccountInfo> response) {
-                // добавить обработку других кодов!!!!!
+            public void onResponse(@NonNull Call<AccountInfo> call, @NonNull Response<AccountInfo> response) {
                 if (isAdded() && getActivity() != null) {
                     if (response.isSuccessful()) {
                         Log.d("Melodymap", "response code" + response.code());
@@ -87,6 +86,7 @@ public class AccountFragment extends Fragment {
                             accountVM.setAccountInfo(getString(R.string.unknown_error) + response.code());
                             Log.e("Melodymap", String.valueOf(response.code()));
                         }
+                        requireActivity().finishAffinity();
                     }
                 }
             }

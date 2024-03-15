@@ -76,6 +76,26 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/accountInfoView" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="120dp"
+            android:layout_marginTop="120dp"
+            android:layout_marginEnd="120dp"
+            android:layout_marginBottom="120dp"
+            android:src="@drawable/fuckthisworldcat"
+            app:layout_constraintBottom_toTopOf="@+id/changeLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/retriveAccountInfoButton"
+            app:shapeAppearanceOverlay="@style/roundedImageView"
+            app:strokeColor="?attr/colorPrimary"
+            app:strokeWidth="8dp"
+            android:padding="4dp">
+
+        </com.google.android.material.imageview.ShapeableImageView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

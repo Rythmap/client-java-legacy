@@ -1,13 +1,12 @@
 package com.mvnh.melodymap;
 
 import android.app.Application;
-
 import com.google.android.material.color.DynamicColors;
 
 public class MelodymapApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        DynamicColors.applyToActivitiesIfAvailable(this);
+        //DynamicColors.applyToActivitiesIfAvailable(this);
     }
 }

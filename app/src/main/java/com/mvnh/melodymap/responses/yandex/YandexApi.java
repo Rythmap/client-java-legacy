@@ -5,6 +5,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface YandexApi {
-    @GET("api/music/yandex.current_track")
+    @GET("music?yandex.current_track")
     Call<YandexInfo> getCurrentTrack(@Query("token") String token);
 }
