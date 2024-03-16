@@ -1,4 +1,4 @@
-package com.mvnh.melodymap;
+package com.mvnh.rythmap;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -21,14 +21,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -51,7 +48,7 @@ public class MapFragment extends Fragment {
                     getLocation();
                 } else {
                     Toast.makeText(getContext(), "access denied", Toast.LENGTH_SHORT).show();
-                    mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle("https://api.jawg.io/styles/jawg-matrix.json?access-token=" + accessToken));
+                    mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle("https://api.jawg.io/styles/jawg-terrain.json?access-token=" + accessToken));
                 }
             });
 
@@ -94,13 +91,13 @@ public class MapFragment extends Fragment {
             @Override
             public void onMessage(@NonNull WebSocket webSocket, @NonNull String text) {
                 super.onMessage(webSocket, text);
-                Log.d("Melodymap", "websocket response" + text);
+                Log.d("Rythmap", "websocket response" + text);
             }
 
             @Override
             public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, @Nullable Response response) {
                 super.onFailure(webSocket, t, response);
-                Log.d("Melodymap", "websocket failure: " + t.getMessage());
+                Log.d("Rythmap", "websocket failure: " + t.getMessage());
             }
         });
 

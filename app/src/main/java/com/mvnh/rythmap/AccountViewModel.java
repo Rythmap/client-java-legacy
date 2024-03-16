@@ -1,4 +1,4 @@
-package com.mvnh.melodymap;
+package com.mvnh.rythmap;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

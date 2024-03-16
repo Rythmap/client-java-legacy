@@ -1,9 +1,8 @@
-package com.mvnh.melodymap;
+package com.mvnh.rythmap;
 
 import android.app.Application;
-import com.google.android.material.color.DynamicColors;
 
-public class MelodymapApplication extends Application {
+public class RythmapApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();

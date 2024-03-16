@@ -1,6 +1,6 @@
-package com.mvnh.melodymap.auth;
+package com.mvnh.rythmap.auth;
 
-import static com.mvnh.melodymap.auth.AuthActivity.errorDescriptions;
+import static com.mvnh.rythmap.auth.AuthActivity.errorDescriptions;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,18 +9,17 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
-import com.mvnh.melodymap.MainActivity;
-import com.mvnh.melodymap.R;
-import com.mvnh.melodymap.TokenManager;
-import com.mvnh.melodymap.databinding.ActivityAuthBinding;
-import com.mvnh.melodymap.databinding.ActivityLoginBinding;
-import com.mvnh.melodymap.responses.ServiceGenerator;
-import com.mvnh.melodymap.responses.account.AccountApi;
-import com.mvnh.melodymap.responses.account.AccountLogin;
-import com.mvnh.melodymap.responses.account.AuthResponse;
+import com.mvnh.rythmap.MainActivity;
+import com.mvnh.rythmap.R;
+import com.mvnh.rythmap.TokenManager;
+import com.mvnh.rythmap.databinding.ActivityAuthBinding;
+import com.mvnh.rythmap.databinding.ActivityLoginBinding;
+import com.mvnh.rythmap.responses.ServiceGenerator;
+import com.mvnh.rythmap.responses.account.AccountApi;
+import com.mvnh.rythmap.responses.account.AccountLogin;
+import com.mvnh.rythmap.responses.account.AuthResponse;
 
 import java.io.IOException;
 
@@ -55,15 +54,15 @@ public class LoginActivity extends AppCompatActivity {
         new Thread(() -> {
             try {
                 Response<AuthResponse> response = call.execute();
-                Log.d("Melodymap", String.valueOf(response));
+                Log.d("Rythmap", String.valueOf(response));
                 if (response.isSuccessful()) {
-                    Log.d("Melodymap", "response code " + response.code());
+                    Log.d("Rythmap", "response code " + response.code());
                     AuthResponse authResponse = response.body();
                     String accessToken = authResponse.getAccessToken();
                     tokenManager.saveToken(accessToken);
-                    Log.d("Melodymap", "access token " + accessToken);
+                    Log.d("Rythmap", "access token " + accessToken);
                     runOnUiThread(() -> {
-                        Log.d("Melodymap", "running main activity after successful response");
+                        Log.d("Rythmap", "running main activity after successful response");
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finishAffinity();
                     });
@@ -71,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                     String errorMessage = errorDescriptions.containsKey(response.code())
                             ? errorDescriptions.get(response.code())
                             : getString(R.string.unknown_error) + response.code();
-                    Log.e("Melodymap", response.code() + errorMessage);
+                    Log.e("Rythmap", response.code() + errorMessage);
                     runOnUiThread(() -> {
                         Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                         binding.usernameField.setEnabled(true);
@@ -80,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
                     });
                 }
             } catch (IOException e) {
-                Log.e("Melodymap", String.valueOf(e));
+                Log.e("Rythmap", String.valueOf(e));
                 runOnUiThread(() -> {
                     Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     binding.usernameField.setEnabled(true);

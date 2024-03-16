@@ -1,6 +1,6 @@
-package com.mvnh.melodymap.auth;
+package com.mvnh.rythmap.auth;
 
-import static com.mvnh.melodymap.auth.AuthActivity.errorDescriptions;
+import static com.mvnh.rythmap.auth.AuthActivity.errorDescriptions;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,14 +9,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.mvnh.melodymap.MainActivity;
-import com.mvnh.melodymap.R;
-import com.mvnh.melodymap.TokenManager;
-import com.mvnh.melodymap.databinding.ActivityRegisterBinding;
-import com.mvnh.melodymap.responses.ServiceGenerator;
-import com.mvnh.melodymap.responses.account.AccountApi;
-import com.mvnh.melodymap.responses.account.AccountRegister;
-import com.mvnh.melodymap.responses.account.AuthResponse;
+import com.mvnh.rythmap.MainActivity;
+import com.mvnh.rythmap.R;
+import com.mvnh.rythmap.TokenManager;
+import com.mvnh.rythmap.databinding.ActivityRegisterBinding;
+import com.mvnh.rythmap.responses.ServiceGenerator;
+import com.mvnh.rythmap.responses.account.AccountApi;
+import com.mvnh.rythmap.responses.account.AccountRegister;
+import com.mvnh.rythmap.responses.account.AuthResponse;
 
 import java.io.IOException;
 
@@ -54,11 +54,11 @@ public class RegisterActivity extends AppCompatActivity {
            try {
                Response<AuthResponse> response = call.execute();
                if (response.isSuccessful()) {
-                   Log.d("Melodymap", "response code" + response.code());
+                   Log.d("Rythmap", "response code" + response.code());
                    AuthResponse authResponse = response.body();
                    String accessToken = authResponse.getAccessToken();
                    tokenManager.saveToken(accessToken);
-                   Log.d("Melodymap", "access token" + accessToken);
+                   Log.d("Rythmap", "access token" + accessToken);
                    runOnUiThread(() -> {
                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                        finish();
@@ -68,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
                    String errorMessage = errorDescriptions.containsKey(response.code())
                            ? errorDescriptions.get(response.code())
                            : getString(R.string.unknown_error) + response.code();
-                   Log.e("Melodymap", errorMessage);
+                   Log.e("Rythmap", errorMessage);
                    runOnUiThread(() -> {
                        Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                        binding.emailField.setEnabled(true);
@@ -78,7 +78,7 @@ public class RegisterActivity extends AppCompatActivity {
                    });
                }
            } catch (IOException e) {
-               Log.e("Melodymap", String.valueOf(e));
+               Log.e("Rythmap", String.valueOf(e));
                runOnUiThread(() -> {
                    Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                    binding.emailField.setEnabled(true);

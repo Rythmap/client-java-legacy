@@ -1,4 +1,4 @@
-package com.mvnh.melodymap.responses;
+package com.mvnh.rythmap.responses;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

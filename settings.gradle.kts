@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Melodymap"
+rootProject.name = "Rythmap"
 include(":app")

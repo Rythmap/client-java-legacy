@@ -1,4 +1,4 @@
-package com.mvnh.melodymap.responses.account;
+package com.mvnh.rythmap.responses.account;
 
 import com.google.gson.annotations.SerializedName;
 

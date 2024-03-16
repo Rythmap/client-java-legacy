@@ -1,4 +1,4 @@
-package com.mvnh.melodymap.responses.account;
+package com.mvnh.rythmap.responses.account;
 
 public class AccountLogin {
     private String username;

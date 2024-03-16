@@ -1,4 +1,4 @@
-package com.mvnh.melodymap;
+package com.mvnh.rythmap;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,17 +14,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.mvnh.melodymap.responses.ServiceGenerator;
-import com.mvnh.melodymap.responses.yandex.YandexApi;
-import com.mvnh.melodymap.responses.yandex.YandexInfo;
+import com.mvnh.rythmap.responses.ServiceGenerator;
+import com.mvnh.rythmap.responses.yandex.YandexApi;
+import com.mvnh.rythmap.responses.yandex.YandexInfo;
 
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RequestFragment extends Fragment {
 

@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.mvnh.melodymap.AccountViewModel"/>
+            type="com.mvnh.rythmap.AccountViewModel"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

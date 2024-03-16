@@ -1,4 +1,4 @@
-package com.mvnh.melodymap.responses.yandex;
+package com.mvnh.rythmap.responses.yandex;
 
 import java.util.List;
 

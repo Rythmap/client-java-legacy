@@ -1,4 +1,4 @@
-package com.mvnh.melodymap;
+package com.mvnh.rythmap;
 
 import android.content.Context;
 import android.content.SharedPreferences;

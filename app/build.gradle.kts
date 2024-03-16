@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.mvnh.melodymap"
+    namespace = "com.mvnh.rythmap"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.mvnh.melomap"
+        applicationId = "com.mvnh.rythmap"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

@@ -1,4 +1,4 @@
-package com.mvnh.melodymap.responses.account;
+package com.mvnh.rythmap.responses.account;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

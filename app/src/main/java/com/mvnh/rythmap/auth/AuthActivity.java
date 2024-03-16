@@ -1,4 +1,4 @@
-package com.mvnh.melodymap.auth;
+package com.mvnh.rythmap.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,10 +6,10 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.mvnh.melodymap.MainActivity;
-import com.mvnh.melodymap.R;
-import com.mvnh.melodymap.TokenManager;
-import com.mvnh.melodymap.databinding.ActivityAuthBinding;
+import com.mvnh.rythmap.MainActivity;
+import com.mvnh.rythmap.R;
+import com.mvnh.rythmap.TokenManager;
+import com.mvnh.rythmap.databinding.ActivityAuthBinding;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +44,7 @@ public class AuthActivity extends AppCompatActivity {
 
         String token = tokenManager.getToken();
         if (token != null && !token.isEmpty()) {
-            Log.d("Melodymap", "token is not empty, running MainActivity");
+            Log.d("Rythmap", "token is not empty, running MainActivity");
             runOnUiThread(() -> {
                 Intent intent = new Intent(AuthActivity.this, MainActivity.class);
                 startActivity(intent);
