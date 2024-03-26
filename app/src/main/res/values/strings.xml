@@ -31,4 +31,6 @@
     <string name="email_optional">Email (optional)</string>
     <string name="map">Map</string>
     <string name="jawg_access_token">zoJPCAjHZjk9n2ZcHEij37TCrQY27K8FzYhq6wzaYBUmdV07RLTVyxTsfx5DqEXI</string>
+    <string name="welcome">Welcome</string>
+    <string name="to_rythmap">to Rythmap</string>
 </resources>

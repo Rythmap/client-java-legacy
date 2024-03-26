@@ -1,10 +1,9 @@
 package com.mvnh.rythmap.auth;
 
-import static com.mvnh.rythmap.auth.AuthActivity.errorDescriptions;
-
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,7 +13,6 @@ import android.widget.Toast;
 import com.mvnh.rythmap.MainActivity;
 import com.mvnh.rythmap.R;
 import com.mvnh.rythmap.TokenManager;
-import com.mvnh.rythmap.databinding.ActivityAuthBinding;
 import com.mvnh.rythmap.databinding.ActivityLoginBinding;
 import com.mvnh.rythmap.responses.ServiceGenerator;
 import com.mvnh.rythmap.responses.account.AccountApi;
@@ -22,6 +20,8 @@ import com.mvnh.rythmap.responses.account.AccountLogin;
 import com.mvnh.rythmap.responses.account.AuthResponse;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -29,18 +29,42 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
     private ActivityLoginBinding binding;
     private TokenManager tokenManager;
+    public static Map<Integer, String> errorDescriptions = new HashMap<>();
+    static {
+        errorDescriptions.put(400, "invalid username or password");
+        errorDescriptions.put(401, "username must contain only English characters and numbers");
+        errorDescriptions.put(402, "username length must be between 3 and 32 characters");
+        errorDescriptions.put(403, "password length must be between 6 and 64 characters");
+        errorDescriptions.put(404, "there is no user with this nickname");
+        errorDescriptions.put(405, "invalid token");
+        errorDescriptions.put(406, "username already registered");
+        errorDescriptions.put(407, "username change failed");
+        errorDescriptions.put(411, "invalid data");
+        errorDescriptions.put(200, "all good");
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdge.enable(this);
 
         tokenManager = new TokenManager(LoginActivity.this);
 
         binding.loginButton.setOnClickListener(v -> performLogin(
                 binding.usernameField.getText().toString(),
                 binding.passwordField.getText().toString()));
+
+        String token = tokenManager.getToken();
+        if (token != null && !token.isEmpty()) {
+            Log.d("Rythmap", "token is not empty, running MainActivity");
+            runOnUiThread(() -> {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            });
+        }
     }
 
     private void performLogin(String username, String password) {
