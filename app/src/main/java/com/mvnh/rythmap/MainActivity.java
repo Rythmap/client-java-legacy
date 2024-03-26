@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import static com.mvnh.rythmap.auth.AuthActivity.errorDescriptions;
+import static com.mvnh.rythmap.auth.LoginActivity.errorDescriptions;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +14,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.mvnh.rythmap.auth.AuthActivity;
+import com.mvnh.rythmap.auth.LoginActivity;
 import com.mvnh.rythmap.responses.ServiceGenerator;
 import com.mvnh.rythmap.responses.account.AccountApi;
 import com.mvnh.rythmap.responses.account.AccountInfo;
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 Log.e("Rythmap", tokenManager.getToken());
                 Toast.makeText(this, "token is empty", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(MainActivity.this, AuthActivity.class));
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 finish();
             });
         } else {
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             accountInfoCall.enqueue(new Callback<AccountInfo>() {
                 @Override
                 public void onResponse(Call<AccountInfo> call, Response<AccountInfo> response) {
-                    Log.d("RythmapRythmap", String.valueOf(response.code()));
+                    Log.d("Rythmap", String.valueOf(response.code()));
                     if (errorDescriptions.containsKey(response.code())) {
                         if (response.code() == 200) {
                             Log.d("Rythmap", "token validation successful");
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
                             runOnUiThread(() -> {
                                 Toast.makeText(MainActivity.this, errorDescriptions.get(response.code()), Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(MainActivity.this, AuthActivity.class));
+                                startActivity(new Intent(MainActivity.this, LoginActivity.class));
                                 finish();
                             });
                             Log.e("Rythmap", errorDescriptions.get(response.code()));
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
                         runOnUiThread(() -> {
                             Toast.makeText(MainActivity.this, getString(R.string.error_checking_token_validity) + response.code(), Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(MainActivity.this, AuthActivity.class));
+                            startActivity(new Intent(MainActivity.this, LoginActivity.class));
                             finish();
                         });
                         Log.e("Rythmap", getString(R.string.error_checking_token_validity));
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
                     runOnUiThread(() -> {
                         Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(MainActivity.this, AuthActivity.class));
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
                         finish();
                     });
                     Log.e("Rythmap", t.getMessage());

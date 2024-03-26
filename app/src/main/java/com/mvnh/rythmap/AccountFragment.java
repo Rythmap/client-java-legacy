@@ -1,6 +1,6 @@
 package com.mvnh.rythmap;
 
-import static com.mvnh.rythmap.auth.AuthActivity.errorDescriptions;
+import static com.mvnh.rythmap.auth.LoginActivity.errorDescriptions;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.mvnh.rythmap.auth.AuthActivity;
+import com.mvnh.rythmap.auth.LoginActivity;
 import com.mvnh.rythmap.databinding.FragmentAccountBinding;
 import com.mvnh.rythmap.responses.ServiceGenerator;
 import com.mvnh.rythmap.responses.account.AccountApi;
@@ -25,7 +25,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AccountFragment extends Fragment {
+public class
+AccountFragment extends Fragment {
     private FragmentAccountBinding binding;
     private AccountViewModel accountVM;
     private TokenManager tokenManager;
@@ -50,7 +51,7 @@ public class AccountFragment extends Fragment {
         binding.logoutButton.setOnClickListener(v -> {
             tokenManager.clearToken();
             Log.d("Rythmap", "Logout");
-            Intent intent = new Intent(requireContext(), AuthActivity.class);
+            Intent intent = new Intent(requireContext(), LoginActivity.class);
             startActivity(intent);
             requireActivity().finishAffinity();
         });

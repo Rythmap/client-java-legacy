@@ -1,12 +1,13 @@
 package com.mvnh.rythmap.auth;
 
-import static com.mvnh.rythmap.auth.AuthActivity.errorDescriptions;
+import static com.mvnh.rythmap.auth.LoginActivity.errorDescriptions;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.mvnh.rythmap.MainActivity;
@@ -32,6 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityRegisterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdge.enable(this);
 
         tokenManager = new TokenManager(RegisterActivity.this);
 

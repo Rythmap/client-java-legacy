@@ -1,10 +1,19 @@
 package com.mvnh.rythmap;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
-import android.Manifest;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -13,14 +22,9 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -91,7 +95,9 @@ public class MapFragment extends Fragment {
             @Override
             public void onMessage(@NonNull WebSocket webSocket, @NonNull String text) {
                 super.onMessage(webSocket, text);
-                Log.d("Rythmap", "websocket response" + text);
+                Log.d("Rythmap", "websocket response " + text);
+
+                // here
             }
 
             @Override
@@ -138,6 +144,24 @@ public class MapFragment extends Fragment {
                 }
             });
         }
+    }
+
+    private Bitmap createMarkerBitmap(String username, Drawable avatar) {
+        View markerView = ((LayoutInflater) getLayoutInflater()).inflate(R.layout.default_marker, null);
+
+        ShapeableImageView markerImage = (ShapeableImageView) markerView.findViewById(R.id.markerUserPfp);
+        TextView markerText = (TextView) markerView.findViewById(R.id.markerUserNickname);
+
+        markerImage.setImageDrawable(avatar);
+        markerText.setText(username);
+
+        markerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        markerView.layout(0, 0, markerView.getMeasuredWidth(), markerView.getMeasuredHeight());
+        Bitmap bitmap = Bitmap.createBitmap(markerView.getMeasuredWidth(), markerView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        markerView.draw(canvas);
+
+        return bitmap;
     }
 
     @Override
