@@ -1,4 +1,4 @@
-package com.mvnh.rythmap.auth;
+package com.mvnh.rythmap;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,15 +8,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
-import com.mvnh.rythmap.MainActivity;
-import com.mvnh.rythmap.R;
-import com.mvnh.rythmap.TokenManager;
 import com.mvnh.rythmap.databinding.ActivityLoginBinding;
 import com.mvnh.rythmap.responses.ServiceGenerator;
 import com.mvnh.rythmap.responses.account.AccountApi;
 import com.mvnh.rythmap.responses.account.AccountLogin;
+import com.mvnh.rythmap.responses.account.AccountRegister;
 import com.mvnh.rythmap.responses.account.AuthResponse;
 
 import java.io.IOException;
@@ -52,9 +51,25 @@ public class LoginActivity extends AppCompatActivity {
 
         tokenManager = new TokenManager(LoginActivity.this);
 
-        binding.loginButton.setOnClickListener(v -> performLogin(
+        binding.loginButton.setOnClickListener(v -> performAuth(
                 binding.usernameField.getText().toString(),
-                binding.passwordField.getText().toString()));
+                binding.passwordField.getText().toString(),
+                binding.emailField.getText().toString()));
+
+        binding.registerButton.setOnClickListener(v -> {
+            if (binding.registerButton.getText().toString().equals(getString(R.string.dont_have_an_account))) {
+                binding.emailFieldLayout.setVisibility(View.VISIBLE);
+                binding.usernameFieldLayout.setHint(R.string.username);
+                binding.loginButton.setText(R.string.register);
+                binding.registerButton.setText(R.string.i_have_an_account);
+            } else {
+                binding.emailField.setText("");
+                binding.emailFieldLayout.setVisibility(View.GONE);
+                binding.usernameFieldLayout.setHint(R.string.username_or_email);
+                binding.loginButton.setText(R.string.login);
+                binding.registerButton.setText(R.string.dont_have_an_account);
+            }
+        });
 
         String token = tokenManager.getToken();
         if (token != null && !token.isEmpty()) {
@@ -67,10 +82,16 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void performLogin(String username, String password) {
+    private void performAuth(String username, String password, String email) {
         AccountApi accountApi = ServiceGenerator.createService(AccountApi.class);
-        Call<AuthResponse> call = accountApi.login(new AccountLogin(username, password));
+        Call<AuthResponse> call;
+        if (!email.isEmpty()) {
+            call = accountApi.register(new AccountRegister(username, password, email));
+        } else {
+            call = accountApi.login(new AccountLogin(username, password));
+        }
 
+        if (!email.isEmpty()) { binding.emailField.setEnabled(false); }
         binding.usernameField.setEnabled(false);
         binding.passwordField.setEnabled(false);
         binding.loginButton.setEnabled(false);
@@ -78,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
         new Thread(() -> {
             try {
                 Response<AuthResponse> response = call.execute();
-                Log.d("Rythmap", String.valueOf(response));
+                Log.d("Rythmap", String.valueOf(response.body()));
                 if (response.isSuccessful()) {
                     Log.d("Rythmap", "response code " + response.code());
                     AuthResponse authResponse = response.body();
@@ -94,23 +115,26 @@ public class LoginActivity extends AppCompatActivity {
                     String errorMessage = errorDescriptions.containsKey(response.code())
                             ? errorDescriptions.get(response.code())
                             : getString(R.string.unknown_error) + response.code();
-                    Log.e("Rythmap", response.code() + errorMessage);
+                    Log.e("Rythmap", response.message() + errorMessage);
                     runOnUiThread(() -> {
                         Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                        binding.usernameField.setEnabled(true);
-                        binding.passwordField.setEnabled(true);
-                        binding.loginButton.setEnabled(true);
+                        enableFields(!email.isEmpty());
                     });
                 }
             } catch (IOException e) {
                 Log.e("Rythmap", String.valueOf(e));
                 runOnUiThread(() -> {
                     Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    binding.usernameField.setEnabled(true);
-                    binding.passwordField.setEnabled(true);
-                    binding.loginButton.setEnabled(true);
+                    enableFields(!email.isEmpty());
                 });
             }
         }).start();
+    }
+
+    private void enableFields(boolean email) {
+        if (email) { binding.emailField.setEnabled(true); }
+        binding.usernameField.setEnabled(true);
+        binding.passwordField.setEnabled(true);
+        binding.loginButton.setEnabled(true);
     }
 }

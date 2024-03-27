@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import static com.mvnh.rythmap.auth.LoginActivity.errorDescriptions;
+import static com.mvnh.rythmap.LoginActivity.errorDescriptions;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +14,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.mvnh.rythmap.auth.LoginActivity;
 import com.mvnh.rythmap.responses.ServiceGenerator;
 import com.mvnh.rythmap.responses.account.AccountApi;
 import com.mvnh.rythmap.responses.account.AccountInfo;

@@ -1,6 +1,6 @@
 package com.mvnh.rythmap;
 
-import static com.mvnh.rythmap.auth.LoginActivity.errorDescriptions;
+import static com.mvnh.rythmap.LoginActivity.errorDescriptions;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.mvnh.rythmap.auth.LoginActivity;
 import com.mvnh.rythmap.databinding.FragmentAccountBinding;
 import com.mvnh.rythmap.responses.ServiceGenerator;
 import com.mvnh.rythmap.responses.account.AccountApi;
