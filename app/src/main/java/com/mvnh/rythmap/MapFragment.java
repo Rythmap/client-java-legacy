@@ -26,7 +26,6 @@ import androidx.fragment.app.Fragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.imageview.ShapeableImageView;
-import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -69,7 +68,7 @@ public class MapFragment extends Fragment {
 
         TokenManager tokenManager = new TokenManager(getContext());
 
-        accessToken = getString(R.string.jawg_access_token);
+        accessToken = SecretData.JAWG_ACCESS_TOKEN;
         String styleUrl = "https://api.jawg.io/styles/jawg-matrix.json?access-token=" + accessToken;
 
         mapView = view.findViewById(R.id.mapView);
@@ -83,7 +82,7 @@ public class MapFragment extends Fragment {
         }
 
         OkHttpClient client = new OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build();
-        Request request = new Request.Builder().url("wss://melomap.fun/ws").build();
+        Request request = new Request.Builder().url("wss://" + SecretData.SERVER_URL + "/ws").build();
         WebSocket webSocket = client.newWebSocket(request, new WebSocketListener() {
             @Override
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -72,15 +73,7 @@ public class RequestFragment extends Fragment {
                         Log.d("Response", String.valueOf(response.code()));
                         YandexInfo yandexInfo = response.body();
                         if (yandexInfo != null) {
-                            List<YandexInfo.Artist> artists = yandexInfo.getArtists();
-                            StringBuilder artistsNames = new StringBuilder();
-                            for (int i = 0; i < artists.size(); i++) {
-                                YandexInfo.Artist artist = artists.get(i);
-                                if (i != 0) {
-                                    artistsNames.append(", ");
-                                }
-                                artistsNames.append(artist.getName());
-                            }
+                            StringBuilder artistsNames = getStringBuilder(yandexInfo);
 
                             saveYandexResponse(artistsNames + " - " + yandexInfo.getTitle());
                             Log.d("Yandex response", getYandexResponse());
@@ -92,6 +85,20 @@ public class RequestFragment extends Fragment {
                         requireActivity().runOnUiThread(() -> yandexMusicResultView.setText(getYandexResponse()));
                     }
                 }
+            }
+
+            @NonNull
+            private StringBuilder getStringBuilder(YandexInfo yandexInfo) {
+                List<YandexInfo.Artist> artists = yandexInfo.getArtists();
+                StringBuilder artistsNames = new StringBuilder();
+                for (int i = 0; i < artists.size(); i++) {
+                    YandexInfo.Artist artist = artists.get(i);
+                    if (i != 0) {
+                        artistsNames.append(", ");
+                    }
+                    artistsNames.append(artist.getName());
+                }
+                return artistsNames;
             }
 
             @Override

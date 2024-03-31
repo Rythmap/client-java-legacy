@@ -101,3 +101,4 @@ deploymentTargetDropDown.xml
 render.experimental.xml
 google-services.json
 *.hprof
+SecretData.java
