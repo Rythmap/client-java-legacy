@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -29,7 +30,14 @@ import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.plugins.annotation.Symbol;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -42,9 +50,7 @@ public class MapFragment extends Fragment {
 
     private MapView mapView;
     private String accessToken;
-    private TokenManager tokenManager;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private OkHttpClient client;
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -57,55 +63,11 @@ public class MapFragment extends Fragment {
             });
 
     @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        Mapbox.getInstance(context);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
         TokenManager tokenManager = new TokenManager(getContext());
-
-        client = new OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build();
-        Request request = new Request.Builder().url("wss://melomap.fun/ws").build();
-        WebSocket webSocket = client.newWebSocket(request, new WebSocketListener() {
-            @Override
-            public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
-                super.onOpen(webSocket, response);
-
-                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-                } else {
-                    fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
-                       if (task.isSuccessful() && task.getResult() != null) {
-                           Location location = task.getResult();
-
-                           String json = "{\"access_token\":\"" + tokenManager.getToken() +
-                                   "\",\"geolocation\":{\"latitude\":" + location.getLatitude() +
-                                   ",\"longitude\":" + location.getLongitude() + "}}";
-                           webSocket.send(json);
-                       }
-                    });
-                }
-            }
-
-            @Override
-            public void onMessage(@NonNull WebSocket webSocket, @NonNull String text) {
-                super.onMessage(webSocket, text);
-                Log.d("Rythmap", "websocket response " + text);
-
-                // here
-            }
-
-            @Override
-            public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, @Nullable Response response) {
-                super.onFailure(webSocket, t, response);
-                Log.d("Rythmap", "websocket failure: " + t.getMessage());
-            }
-        });
 
         accessToken = getString(R.string.jawg_access_token);
         String styleUrl = "https://api.jawg.io/styles/jawg-matrix.json?access-token=" + accessToken;
@@ -117,9 +79,83 @@ public class MapFragment extends Fragment {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         } else {
-            mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(styleUrl));
             getLocation();
         }
+
+        OkHttpClient client = new OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build();
+        Request request = new Request.Builder().url("wss://melomap.fun/ws").build();
+        WebSocket webSocket = client.newWebSocket(request, new WebSocketListener() {
+            @Override
+            public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
+                super.onOpen(webSocket, response);
+
+                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+                } else {
+                    fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            Location location = task.getResult();
+
+                            String json = "{\"access_token\":\"" + tokenManager.getToken() +
+                                    "\",\"geolocation\":{\"latitude\":" + location.getLatitude() +
+                                    ",\"longitude\":" + location.getLongitude() + "}}";
+                            webSocket.send(json);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onMessage(@NonNull WebSocket webSocket, @NonNull String text) {
+                super.onMessage(webSocket, text);
+                Log.d("Rythmap", "websocket response " + text);
+
+                try {
+                    JSONObject jsonObject = new JSONObject(text);
+                    Iterator<String> keys = jsonObject.keys();
+                    while (keys.hasNext()) {
+                        String key = keys.next();
+                        JSONObject user = jsonObject.getJSONObject(key);
+
+                        mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(styleUrl, style -> {
+                            try {
+                                String username = user.getJSONObject("username").getString("username");
+                                // Drawable picture = ResourcesCompat.getDrawable(getResources(), R.drawable.fuckthisworldcat, null);
+                                JSONObject geolocation = user.getJSONObject("username").getJSONObject("geolocation");
+
+                                double latitude = geolocation.getDouble("latitude");
+                                double longitude = geolocation.getDouble("longitude");
+
+                                Bitmap bitmap = createMarkerBitmap(null, username);
+                                style.addImage("marker-" + username, bitmap);
+
+                                SymbolManager symbolManager = new SymbolManager(mapView, mapboxMap, style);
+                                symbolManager.setIconAllowOverlap(true);
+                                symbolManager.setIconIgnorePlacement(true);
+
+                                Symbol symbol = symbolManager.create(new SymbolOptions()
+                                        .withLatLng(new LatLng(latitude, longitude))
+                                        .withIconImage("marker-" + username)
+                                        .withIconSize(1.0f)
+                                        .withIconAnchor("bottom"));
+
+                                symbolManager.update(symbol);
+                            } catch (JSONException e) {
+                                Log.e("Rythmap", e.toString());
+                            }
+                        }));
+                    }
+                } catch (JSONException e) {
+                    Log.e("Rythmap", e.toString());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, @Nullable Response response) {
+                super.onFailure(webSocket, t, response);
+                Log.d("Rythmap", "websocket failure: " + t.getMessage());
+            }
+        });
 
         return view;
     }
@@ -146,23 +182,25 @@ public class MapFragment extends Fragment {
         }
     }
 
-    private Bitmap createMarkerBitmap(String username, Drawable avatar) {
-        View markerView = ((LayoutInflater) getLayoutInflater()).inflate(R.layout.default_marker, null);
+    public Bitmap createMarkerBitmap(Drawable picture, String username) {
+        View markerLayout = getLayoutInflater().inflate(R.layout.default_marker, null);
 
-        ShapeableImageView markerImage = (ShapeableImageView) markerView.findViewById(R.id.markerUserPfp);
-        TextView markerText = (TextView) markerView.findViewById(R.id.markerUserNickname);
+        ShapeableImageView imageView = markerLayout.findViewById(R.id.markerUserPfp);
+        TextView textView = markerLayout.findViewById(R.id.markerUserNickname);
 
-        markerImage.setImageDrawable(avatar);
-        markerText.setText(username);
+        // picasso will be here
+        imageView.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.fuckthisworldcat, null));
+        textView.setText(username);
 
-        markerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        markerView.layout(0, 0, markerView.getMeasuredWidth(), markerView.getMeasuredHeight());
-        Bitmap bitmap = Bitmap.createBitmap(markerView.getMeasuredWidth(), markerView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        markerLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        Bitmap bitmap = Bitmap.createBitmap(markerLayout.getMeasuredWidth(), markerLayout.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
-        markerView.draw(canvas);
+        markerLayout.layout(0, 0, markerLayout.getMeasuredWidth(), markerLayout.getMeasuredHeight());
+        markerLayout.draw(canvas);
 
         return bitmap;
     }
+
 
     @Override
     public void onStart() {
