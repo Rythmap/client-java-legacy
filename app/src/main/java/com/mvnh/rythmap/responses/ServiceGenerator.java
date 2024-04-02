@@ -6,7 +6,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServiceGenerator {
-    public static final String BASE_URL = SecretData.SERVER_URL;
+    public static final String BASE_URL = "https://" + SecretData.SERVER_URL + "/";
     private static Retrofit.Builder builder
             = new Retrofit.Builder()
             .baseUrl(BASE_URL)

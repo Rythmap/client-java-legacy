@@ -26,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -60,6 +61,12 @@ public class MapFragment extends Fragment {
                     mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle("https://api.jawg.io/styles/jawg-terrain.json?access-token=" + accessToken));
                 }
             });
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        Mapbox.getInstance(context);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -114,35 +121,40 @@ public class MapFragment extends Fragment {
                     Iterator<String> keys = jsonObject.keys();
                     while (keys.hasNext()) {
                         String key = keys.next();
-                        JSONObject user = jsonObject.getJSONObject(key);
+                        JSONObject user = new JSONObject(jsonObject.getJSONObject(key).toString());
 
-                        mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(styleUrl, style -> {
-                            try {
-                                String username = user.getJSONObject("username").getString("username");
-                                // Drawable picture = ResourcesCompat.getDrawable(getResources(), R.drawable.fuckthisworldcat, null);
-                                JSONObject geolocation = user.getJSONObject("username").getJSONObject("geolocation");
+                        Log.d("Rythmap", key);
 
-                                double latitude = geolocation.getDouble("latitude");
-                                double longitude = geolocation.getDouble("longitude");
+                        getActivity().runOnUiThread(() -> {
+                            mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(styleUrl, style -> {
+                                try {
+                                    String username = user.getString("username");
+                                    Log.d("Rythmap", username);
+                                    // Drawable picture = ResourcesCompat.getDrawable(getResources(), R.drawable.fuckthisworldcat, null);
+                                    JSONObject geolocation = user.getJSONObject("geolocation");
 
-                                Bitmap bitmap = createMarkerBitmap(null, username);
-                                style.addImage("marker-" + username, bitmap);
+                                    double latitude = geolocation.getDouble("latitude");
+                                    double longitude = geolocation.getDouble("longitude");
 
-                                SymbolManager symbolManager = new SymbolManager(mapView, mapboxMap, style);
-                                symbolManager.setIconAllowOverlap(true);
-                                symbolManager.setIconIgnorePlacement(true);
+                                    Bitmap bitmap = createMarkerBitmap(null, username);
 
-                                Symbol symbol = symbolManager.create(new SymbolOptions()
-                                        .withLatLng(new LatLng(latitude, longitude))
-                                        .withIconImage("marker-" + username)
-                                        .withIconSize(1.0f)
-                                        .withIconAnchor("bottom"));
+                                    style.addImage("marker-" + username, bitmap);
 
-                                symbolManager.update(symbol);
-                            } catch (JSONException e) {
-                                Log.e("Rythmap", e.toString());
-                            }
-                        }));
+                                    SymbolManager symbolManager = new SymbolManager(mapView, mapboxMap, style);
+                                    symbolManager.setIconAllowOverlap(true);
+                                    symbolManager.setIconIgnorePlacement(true);
+
+                                    Symbol symbol = symbolManager.create(new SymbolOptions()
+                                            .withLatLng(new LatLng(latitude, longitude))
+                                            .withIconImage("marker-" + username).withIconSize(0.625f)
+                                            .withIconAnchor("bottom"));
+
+                                    symbolManager.update(symbol);
+                                } catch (JSONException e) {
+                                    Log.e("Rythmap", e.toString());
+                                }
+                            }));
+                        });
                     }
                 } catch (JSONException e) {
                     Log.e("Rythmap", e.toString());
