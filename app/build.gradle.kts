@@ -14,6 +14,8 @@ android {
         versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders["YANDEX_CLIENT_ID"] = "23cabbbdc6cd418abb4b39c32c41195d"
     }
 
     buildTypes {
@@ -59,6 +61,8 @@ dependencies {
 
     implementation("org.maplibre.gl:android-sdk:10.3.0")
     implementation("org.maplibre.gl:android-plugin-annotation-v9:2.0.2")
+
+    implementation("com.yandex.android:authsdk:3.1.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

@@ -106,6 +106,7 @@ public class MapFragment extends Fragment {
                                     "\",\"geolocation\":{\"latitude\":" + location.getLatitude() +
                                     ",\"longitude\":" + location.getLongitude() + "}}";
                             webSocket.send(json);
+                            Log.d("Rythmap", json);
                         }
                     });
                 }
@@ -121,9 +122,7 @@ public class MapFragment extends Fragment {
                     Iterator<String> keys = jsonObject.keys();
                     while (keys.hasNext()) {
                         String key = keys.next();
-                        JSONObject user = new JSONObject(jsonObject.getJSONObject(key).toString());
-
-                        Log.d("Rythmap", key);
+                        JSONObject user = jsonObject.getJSONObject(key);
 
                         getActivity().runOnUiThread(() -> {
                             mapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(styleUrl, style -> {
@@ -165,6 +164,11 @@ public class MapFragment extends Fragment {
             public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, @Nullable Response response) {
                 super.onFailure(webSocket, t, response);
                 Log.d("Rythmap", "websocket failure: " + t.getMessage());
+            }
+
+            @Override
+            public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
+                super.onClosed(webSocket, code, reason);
             }
         });
 

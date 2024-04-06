@@ -12,8 +12,7 @@
         android:layout_height="match_parent"
         mapbox:maplibre_cameraTargetLat="55.7510"
         mapbox:maplibre_cameraTargetLng="37.6176"
-        mapbox:maplibre_cameraZoomMax="12.5"
-        mapbox:maplibre_cameraZoomMin="15">
+        mapbox:maplibre_cameraZoom="10">
 
     </com.mapbox.mapboxsdk.maps.MapView>
 

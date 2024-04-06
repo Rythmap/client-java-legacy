@@ -87,15 +87,24 @@
             app:layout_constraintTop_toBottomOf="@+id/yandexMusicResultView" />
 
         <Button
-            android:id="@+id/requestButton"
+        android:id="@+id/requestButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="@string/perform_request"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/soundCloudResultView" />
+
+        <Button
+            android:id="@+id/yandexAuthButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:text="@string/perform_request"
+            android:text="yandex auth"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/soundCloudResultView" />
-
+            app:layout_constraintTop_toBottomOf="@+id/requestButton" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

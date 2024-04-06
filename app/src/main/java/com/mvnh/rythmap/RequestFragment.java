@@ -3,18 +3,17 @@ package com.mvnh.rythmap;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.mvnh.rythmap.databinding.FragmentRequestBinding;
 import com.mvnh.rythmap.responses.ServiceGenerator;
 import com.mvnh.rythmap.responses.yandex.YandexApi;
 import com.mvnh.rythmap.responses.yandex.YandexInfo;
@@ -25,42 +24,52 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import com.yandex.authsdk.YandexAuthLoginOptions;
+import com.yandex.authsdk.YandexAuthOptions;
+import com.yandex.authsdk.YandexAuthResult;
+import com.yandex.authsdk.YandexAuthSdk;
+
 public class RequestFragment extends Fragment {
 
-    private TextView yandexMusicResultView, soundCloudResultView;
+    private FragmentRequestBinding binding;
+    private YandexAuthSdk sdk;
+    private ActivityResultLauncher<YandexAuthLoginOptions> launcher;
 
-    private EditText yandexMusicToken;
-    private EditText soundCloudOAuth, soundCloudClientID;
-
-    private Button request;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        sdk = YandexAuthSdk.create(new YandexAuthOptions(requireContext()));
+        launcher = registerForActivityResult(sdk.getContract(), this::handleYandexResult);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_request, container, false);
+        binding = FragmentRequestBinding.inflate(inflater, container, false);
 
-        yandexMusicResultView = view.findViewById(R.id.yandexMusicResultView);
-        soundCloudResultView = view.findViewById(R.id.soundCloudResultView);
+        binding.requestButton.setOnClickListener(v -> yandexRequest(binding.yandexMusicTokenLabel.getText().toString()));
+        binding.yandexAuthButton.setOnClickListener(v -> {
+            YandexAuthLoginOptions loginOptions = new YandexAuthLoginOptions();
+            launcher.launch(loginOptions);
+        });
 
-        yandexMusicToken = view.findViewById(R.id.yandexMusicTokenLabel);
-        soundCloudOAuth = view.findViewById(R.id.soundCloudOauthLabel);
-        soundCloudClientID = view.findViewById(R.id.soundCloudClientIdLabel);
+        return binding.getRoot();
+    }
 
-        request = view.findViewById(R.id.requestButton);
-
-        String yandexResponse = getYandexResponse();
-        if (yandexResponse != null) {
-            Log.d("Yandex response", yandexResponse);
-            yandexMusicResultView.setText(yandexResponse);
+    private void handleYandexResult(YandexAuthResult result) {
+        if (result instanceof YandexAuthResult.Success) {
+            Log.d("Rythmap", String.valueOf(((YandexAuthResult.Success) result).getToken()));
+            yandexRequest(String.valueOf(((YandexAuthResult.Success) result).getToken()));
+        } else if (result instanceof YandexAuthResult.Failure) {
+            Log.e("Rythmap", String.valueOf(((YandexAuthResult.Failure) result).getException()));
+            binding.yandexMusicResultView.setText(String.valueOf(((YandexAuthResult.Failure) result).getException()));
+        } else {
+            binding.yandexMusicResultView.setText("something else happened and idk what");
         }
-
-        request.setOnClickListener(v -> yandexRequest(yandexMusicToken.getText().toString()));
-
-        return view;
     }
 
     private void yandexRequest(String token) {
-        yandexMusicResultView.setText(R.string.wait);
+        binding.yandexMusicResultView.setText(R.string.wait);
 
         YandexApi yandexApi = ServiceGenerator.createService(YandexApi.class);
         Call<YandexInfo> call = yandexApi.getCurrentTrack(token);
@@ -77,12 +86,12 @@ public class RequestFragment extends Fragment {
 
                             saveYandexResponse(artistsNames + " - " + yandexInfo.getTitle());
                             Log.d("Yandex response", getYandexResponse());
-                            requireActivity().runOnUiThread(() -> yandexMusicResultView.setText(getYandexResponse()));
+                            requireActivity().runOnUiThread(() -> binding.yandexMusicResultView.setText(getYandexResponse()));
                         }
                     } else {
                         saveYandexResponse("connection failed " + response.code());
                         Log.e("Yandex response", getYandexResponse());
-                        requireActivity().runOnUiThread(() -> yandexMusicResultView.setText(getYandexResponse()));
+                        requireActivity().runOnUiThread(() -> binding.yandexMusicResultView.setText(getYandexResponse()));
                     }
                 }
             }
@@ -106,7 +115,7 @@ public class RequestFragment extends Fragment {
                 if (isAdded() && getActivity() != null) {
                     saveYandexResponse(t.getMessage());
                     Log.e("Yandex response", getYandexResponse());
-                    requireActivity().runOnUiThread(() -> yandexMusicResultView.setText(getYandexResponse()));
+                    requireActivity().runOnUiThread(() -> binding.yandexMusicResultView.setText(getYandexResponse()));
                 }
             }
         });
