@@ -61,27 +61,6 @@ public class RequestFragment extends Fragment {
         return binding.getRoot();
     }
 
-    public static Bitmap drawableToBitmap(Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        }
-
-        Bitmap bitmap;
-        if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
-            // Создаем одноцветный bitmap 1x1 пиксель
-            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
-        } else {
-            // Создаем bitmap соответствующего размера
-            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        }
-
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-        return bitmap;
-    }
-
     private void handleYandexResult(YandexAuthResult result) {
         if (result instanceof YandexAuthResult.Success) {
             Log.d("Rythmap", String.valueOf(((YandexAuthResult.Success) result).getToken()));

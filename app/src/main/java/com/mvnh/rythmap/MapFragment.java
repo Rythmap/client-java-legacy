@@ -179,7 +179,6 @@ public class MapFragment extends Fragment {
                                         symbol.setLatLng(new LatLng(latitude, longitude));
                                     }
                                     symbolManager.update(symbol);
-                                    Log.d("Rythmap", "====================================================");
                                 };
                             } catch (JSONException e) {
                                 Log.e("Rythmap", e.toString());
