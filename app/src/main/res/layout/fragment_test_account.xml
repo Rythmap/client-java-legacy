@@ -1,0 +1,46 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TestAccountFragment">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/backgroundImageView"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@drawable/profile_background_shape"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/nickname_background"
+        android:gravity="center"
+        android:padding="6dp"
+        android:text="mvnh"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/pfpImageView"
+        app:layout_constraintEnd_toEndOf="@+id/pfpImageView"
+        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintStart_toStartOf="@+id/pfpImageView"/>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/pfpImageView"
+        android:layout_width="125dp"
+        android:layout_height="125dp"
+        android:layout_marginTop="85dp"
+        android:src="@drawable/fuckthisworldcat"
+        app:layout_constraintEnd_toEndOf="@+id/backgroundImageView"
+        app:layout_constraintStart_toStartOf="@+id/backgroundImageView"
+        app:layout_constraintTop_toTopOf="@+id/backgroundImageView"
+        app:shapeAppearanceOverlay="@style/roundedImageView"
+        app:strokeColor="?attr/colorPrimary"
+        app:strokeWidth="8dp"
+        android:padding="4dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

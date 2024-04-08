@@ -2,6 +2,10 @@ package com.mvnh.rythmap;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +15,9 @@ import android.view.ViewGroup;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.palette.graphics.Palette;
 
 import com.mvnh.rythmap.databinding.FragmentRequestBinding;
 import com.mvnh.rythmap.responses.ServiceGenerator;
@@ -32,18 +38,17 @@ import com.yandex.authsdk.YandexAuthSdk;
 public class RequestFragment extends Fragment {
 
     private FragmentRequestBinding binding;
-    private YandexAuthSdk sdk;
     private ActivityResultLauncher<YandexAuthLoginOptions> launcher;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sdk = YandexAuthSdk.create(new YandexAuthOptions(requireContext()));
+        YandexAuthSdk sdk = YandexAuthSdk.create(new YandexAuthOptions(requireContext()));
         launcher = registerForActivityResult(sdk.getContract(), this::handleYandexResult);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentRequestBinding.inflate(inflater, container, false);
 
@@ -54,6 +59,27 @@ public class RequestFragment extends Fragment {
         });
 
         return binding.getRoot();
+    }
+
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        Bitmap bitmap;
+        if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            // Создаем одноцветный bitmap 1x1 пиксель
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+        } else {
+            // Создаем bitmap соответствующего размера
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        }
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
     }
 
     private void handleYandexResult(YandexAuthResult result) {
