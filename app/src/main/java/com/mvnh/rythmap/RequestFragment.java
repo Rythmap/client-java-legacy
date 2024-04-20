@@ -2,10 +2,6 @@ package com.mvnh.rythmap;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,14 +11,12 @@ import android.view.ViewGroup;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
-import androidx.palette.graphics.Palette;
 
 import com.mvnh.rythmap.databinding.FragmentRequestBinding;
 import com.mvnh.rythmap.responses.ServiceGenerator;
 import com.mvnh.rythmap.responses.yandex.YandexApi;
-import com.mvnh.rythmap.responses.yandex.YandexInfo;
+import com.mvnh.rythmap.responses.yandex.entities.YandexInfo;
 
 import java.util.List;
 

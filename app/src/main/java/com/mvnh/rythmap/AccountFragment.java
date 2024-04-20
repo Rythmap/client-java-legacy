@@ -17,7 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.mvnh.rythmap.databinding.FragmentAccountBinding;
 import com.mvnh.rythmap.responses.ServiceGenerator;
 import com.mvnh.rythmap.responses.account.AccountApi;
-import com.mvnh.rythmap.responses.account.AccountInfo;
+import com.mvnh.rythmap.responses.account.entities.AccountInfo;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -67,7 +67,7 @@ AccountFragment extends Fragment {
                         AccountInfo body = response.body();
                         Log.d("Rythmap", "body" + body.toString());
                         String resultString = "Token valid: " + body.isTokenValid() + "\n" +
-                                "Username: " + body.getUsername() + "\n" +
+                                "Username: " + body.getNickname() + "\n" +
                                 "Email: " + body.getEmail() + "\n" +
                                 "Email confirmed: " + body.isEmailConfirmed();
                         Log.d("Rythmap", resultString);

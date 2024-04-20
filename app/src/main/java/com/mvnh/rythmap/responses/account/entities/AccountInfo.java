@@ -1,11 +1,11 @@
-package com.mvnh.rythmap.responses.account;
+package com.mvnh.rythmap.responses.account.entities;
 
 import com.google.gson.annotations.SerializedName;
 
 public class AccountInfo {
     @SerializedName("token_valid")
     private boolean tokenValid;
-    private String username;
+    private String nickname;
     private String email;
     @SerializedName("email_confirmed")
     private boolean emailConfirmed;
@@ -14,8 +14,8 @@ public class AccountInfo {
         return tokenValid;
     }
 
-    public String getUsername() {
-        return username;
+    public String getNickname() {
+        return nickname;
     }
 
     public String getEmail() {
@@ -30,7 +30,7 @@ public class AccountInfo {
     public String toString() {
         return "AccountInfo{" +
                 "tokenValid=" + tokenValid +
-                ", username='" + username + '\'' +
+                ", nickname='" + nickname + '\'' +
                 ", email='" + email + '\'' +
                 ", emailConfirmed=" + emailConfirmed +
                 '}';

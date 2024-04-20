@@ -46,6 +46,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Executors;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -105,6 +107,7 @@ public class MapFragment extends Fragment {
 
         OkHttpClient client = new OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build();
         Request request = new Request.Builder().url("wss://" + SecretData.SERVER_URL + "/ws").build();
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         WebSocket webSocket = client.newWebSocket(request, new WebSocketListener() {
             @Override
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
@@ -113,18 +116,22 @@ public class MapFragment extends Fragment {
                 if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
                 } else {
-                    getUserLocation().addOnCompleteListener(task -> {
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            Location location = task.getResult();
+                    executorService.scheduleAtFixedRate(() -> {
+                        getUserLocation().addOnCompleteListener(task -> {
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                Location location = task.getResult();
 
-                            String json = "{\"access_token\":\"" + tokenManager.getToken() +
-                                    "\",\"geolocation\":{\"latitude\":" + location.getLatitude() +
-                                    ",\"longitude\":" + location.getLongitude() + "}}";
-                            Log.d("Rythmap", json);
+                                String json = "{\"access_token\":\"" + tokenManager.getToken() +
+                                        "\",\"geolocation\":{\"latitude\":" + location.getLatitude() +
+                                        ",\"longitude\":" + location.getLongitude() + "}}";
+                                Log.d("Rythmap", json);
 
-                            webSocket.send(json);
-                        }
-                    });
+                                webSocket.send(json);
+
+                                binding.textView2.setText(json);
+                            }
+                        });
+                    }, 0, 1, TimeUnit.SECONDS);
                 }
             }
 

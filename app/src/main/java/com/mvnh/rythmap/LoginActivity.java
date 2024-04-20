@@ -14,9 +14,9 @@ import android.widget.Toast;
 import com.mvnh.rythmap.databinding.ActivityLoginBinding;
 import com.mvnh.rythmap.responses.ServiceGenerator;
 import com.mvnh.rythmap.responses.account.AccountApi;
-import com.mvnh.rythmap.responses.account.AccountLogin;
-import com.mvnh.rythmap.responses.account.AccountRegister;
-import com.mvnh.rythmap.responses.account.AuthResponse;
+import com.mvnh.rythmap.responses.account.entities.AccountLogin;
+import com.mvnh.rythmap.responses.account.entities.AccountRegister;
+import com.mvnh.rythmap.responses.account.entities.AuthResponse;
 
 import java.io.IOException;
 import java.util.HashMap;

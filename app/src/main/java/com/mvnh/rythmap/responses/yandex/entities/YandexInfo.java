@@ -1,4 +1,4 @@
-package com.mvnh.rythmap.responses.yandex;
+package com.mvnh.rythmap.responses.yandex.entities;
 
 import java.util.List;
 

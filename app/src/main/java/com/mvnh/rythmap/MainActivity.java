@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mvnh.rythmap.responses.ServiceGenerator;
 import com.mvnh.rythmap.responses.account.AccountApi;
-import com.mvnh.rythmap.responses.account.AccountInfo;
+import com.mvnh.rythmap.responses.account.entities.AccountInfo;
 
 import retrofit2.Call;
 import retrofit2.Callback;
