@@ -28,7 +28,7 @@ public interface AccountApi {
 
     @Multipart
     @POST("upload-avatar")
-    Call<ResponseBody> uploadAvatar(@Part("token") String token, @Part MultipartBody.Part file);
+    Call<ResponseBody> uploadAvatar(@Query("token") String token, @Part MultipartBody.Part file);
 
     @GET("avatar/{nickname}")
     Call<ResponseBody> getAvatar(@Path("nickname") String nickname);

@@ -64,7 +64,7 @@ dependencies {
 
     implementation("com.yandex.android:authsdk:3.1.0")
 
-    implementation("androidx.palette:palette:1.0.0")
+    implementation("commons-io:commons-io:2.16.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

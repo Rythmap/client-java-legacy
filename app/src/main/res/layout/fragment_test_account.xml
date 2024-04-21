@@ -126,7 +126,8 @@
         app:layout_constraintStart_toStartOf="@+id/profileInfoCardView"
         app:shapeAppearanceOverlay="@style/roundedImageView"
         app:strokeColor="?attr/colorPrimary"
-        app:strokeWidth="8dp">
+        app:strokeWidth="8dp"
+        android:scaleType="centerCrop">
 
     </com.google.android.material.imageview.ShapeableImageView>
 

@@ -1,9 +1,8 @@
 package com.mvnh.rythmap;
 
-import static kotlin.io.ByteStreamsKt.readBytes;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +20,8 @@ import com.mvnh.rythmap.responses.ServiceGenerator;
 import com.mvnh.rythmap.responses.account.AccountApi;
 import com.mvnh.rythmap.responses.account.entities.AccountInfo;
 
-import java.io.FileNotFoundException;
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -37,7 +37,8 @@ public class TestAccountFragment extends Fragment {
 
     private FragmentTestAccountBinding binding;
     private TokenManager tokenManager;
-    ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
+    ActivityResultLauncher<PickVisualMediaRequest> pickVisualMediaRequestActivityResultLauncher;
+    AccountApi accountApi;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -45,49 +46,26 @@ public class TestAccountFragment extends Fragment {
 
         tokenManager = new TokenManager(requireContext());
 
+        accountApi = ServiceGenerator.createService(AccountApi.class);
+
         retrieveAccountInfo(tokenManager.getToken());
 
-        pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
-            if (uri != null) {
-                AccountApi accountApi = ServiceGenerator.createService(AccountApi.class);
-
-                try {
-                    InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
-                    byte[] bytes = readBytes(inputStream);
-                    RequestBody requestFile = RequestBody.create(bytes, MediaType.parse("multipart/form-data"));
-                    MultipartBody.Part imageBody = MultipartBody.Part.createFormData("avatar", "avatar-" + tokenManager.getToken() + ".jpg", requestFile);
-
-                    Call<ResponseBody> call = accountApi.uploadAvatar(tokenManager.getToken(), imageBody);
-                    call.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            if (response.isSuccessful()) {
-                                fetchAvatar(nickname);
-                            } else {
-                                Log.e("Rythmap", String.valueOf(response.code()));
-                                try {
-                                    Log.e("Rythmap", String.valueOf(response.errorBody().string()));
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
+        pickVisualMediaRequestActivityResultLauncher =
+                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                    if (uri != null) {
+                        try {
+                            uploadMediaToServer(tokenManager.getToken(), uri);
+                        } catch (IOException e) {
+                            Log.e("Rythmap", e.toString());
                         }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                        }
-                    });
-                } catch (FileNotFoundException e) {
-                    Log.e("Rythmap", e.toString());
-                }
-            } else {
-                Toast.makeText(requireContext(), "something happened", Toast.LENGTH_SHORT).show();
-            }
+                    } else {
+                        Log.e("Rythmap", "smth happened");
+                    }
         });
 
         binding.profilePfp.setOnClickListener(v -> {
-            pickMedia.launch(new PickVisualMediaRequest.Builder()
+            pickVisualMediaRequestActivityResultLauncher
+                    .launch(new PickVisualMediaRequest.Builder()
                     .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                     .build());
         });
@@ -97,7 +75,6 @@ public class TestAccountFragment extends Fragment {
 
     String nickname = null;
     public void retrieveAccountInfo(String token) {
-        AccountApi accountApi = ServiceGenerator.createService(AccountApi.class);
         Call<AccountInfo> call = accountApi.getAccountInfo(token);
         call.enqueue(new Callback<AccountInfo>() {
             @Override
@@ -119,12 +96,38 @@ public class TestAccountFragment extends Fragment {
 
             }
         });
+    }
 
+    private void uploadMediaToServer(String token, Uri uri) throws IOException {
+        InputStream uriInputStream = requireContext().getContentResolver().openInputStream(uri);
+        byte[] uriISBytes = IOUtils.toByteArray(uriInputStream);
+        RequestBody requestBody = RequestBody.create(uriISBytes, MediaType.parse("image/jpeg"));
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", "avatar-" + token, requestBody);
 
+        Call<ResponseBody> call = accountApi.uploadAvatar(token, filePart);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    fetchAvatar(nickname);
+                } else {
+                    Log.e("Rythmap", String.valueOf(response.code()));
+                    try {
+                        Log.e("Rythmap", response.errorBody().string());
+                    } catch (IOException e) {
+                        Log.e("Rythmap", e.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                Log.e("Rythmap", throwable.getMessage());
+            }
+        });
     }
 
     private void fetchAvatar(String username) {
-        AccountApi accountApi = ServiceGenerator.createService(AccountApi.class);
         Call<ResponseBody> call = accountApi.getAvatar(nickname);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
